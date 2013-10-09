@@ -164,7 +164,7 @@ condition
             var op = $5;
             var value = $6;
 
-            yy.validate(type, op, value);
+            yy.validate(op, name, value, type);
             $$ = [ op, { name: name, type: type }, value ];
         }
     | string string string
@@ -173,6 +173,7 @@ condition
             var op = $2;
             var value = $3;
 
+            yy.validate(op, name, value);
             $$ = [ op, { name: name }, value ];
         }
     | '(' conditions ')'

@@ -1,0 +1,20 @@
+{
+    "name": "aperture",
+    "description": "Security policy language and evaluation engine",
+    "version": "0.0.0",
+    "author": "Fred Kuo",
+    "private": true,
+    "dependencies": {
+        "assert-plus": "~0.1.4",
+        "bunyan": "~0.21.4",
+        "ipaddr.js": "~0.1.1",
+        "jison": "~0.4.13"
+    },
+    "devDependencies": {
+        "once": "1.2.0",
+        "nodeunit" : "0.8.1"
+    },
+    "engines": {
+        "node": ">=0.10"
+    }
+}
