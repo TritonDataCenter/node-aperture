@@ -1,0 +1,6 @@
+/node_modules
+docs/*.json
+docs/*.html
+smf/manifests/bapi.xml
+.*.swp
+.*.swo
