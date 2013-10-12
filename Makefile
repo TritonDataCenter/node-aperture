@@ -32,16 +32,13 @@ JSL_FILES_NODE   = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS    = -f tools/jsstyle.conf
 
+CLEAN_FILES	+= node_modules lib/language.js
 #
 # Repo-specific targets
 #
 .PHONY: all
-all: rebuild lib/parser.js
-	$(NPM) rebuild
-
-.PHONY: rebuild
-rebuild:
-	$(NPM) rebuild
+all: lib/parser.js
+	$(NPM) install
 
 $(JISON):
 	$(NPM) install
@@ -49,11 +46,11 @@ $(JISON):
 $(NODEUNIT):
 	$(NPM) install
 
-lib/parser.js: lib/language.jison $(JISON)
+lib/language.js: lib/language.jison $(JISON)
 	$(JISON) -o $@ $<
 
 .PHONY: test
-test: $(NODEUNIT) lib/parser.js
+test: $(NODEUNIT) lib/language.js
 	find test -name '*.test.js' | xargs -n 1 $(NODEUNIT)
 
 include ./Makefile.deps

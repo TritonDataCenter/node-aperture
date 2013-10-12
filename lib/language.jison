@@ -28,18 +28,18 @@ stresc          "\\"
 "ANYTHING"      return 'ANYTHING';
 "*"             return '*';
 
-":"             return ':';
+"::"            return '::';
 ","             return ',';
 "("             return '(';
 ")"             return ')';
 
 \"(?:{stresc}["bfnrt/{stresc}]|{stresc}"u"[a-fA-F0-9]{4}|[^"{stresc}])*\"
     {
-        yytext = yytext.substr(1,yyleng-2); return 'QUOTED_STRING';
+        yytext = yytext.substr(1,yyleng-2);
+        return 'STRING_LITERAL';
     }
 
-[^\s:;,]+       return 'STRING';
-
+([^\s,():](\:(?!\:))?)+ return 'STRING';
 
 /lex
 
@@ -63,7 +63,7 @@ if
 
 string
     : STRING
-    | QUOTED_STRING
+    | STRING_LITERAL
     ;
 
 rule
@@ -121,9 +121,9 @@ long_list
 
 effect
     : CAN
-        { $$ = 'allow'; }
+        { $$ = true; }
     | CAN NOT
-        { $$ = 'deny'; }
+        { $$ = false; }
     ;
 
 
@@ -157,12 +157,12 @@ unary_con
     ;
 
 condition
-    : string ':' ':' string string string
+    : string '::' string string string
         {
             var name = $1;
-            var type = $4;
-            var op = $5;
-            var value = $6;
+            var type = $3;
+            var op = $4;
+            var value = $5;
 
             yy.validate(op, name, value, type);
             $$ = [ op, { name: name, type: type }, value ];
