@@ -1,14 +1,6 @@
 // Copyright (c) 2013, Joyent, Inc. All rights reserved.
-
-var bunyan = require('bunyan');
-var helper = require('./helper.js');
-
 var Parser = require('../lib/parser.js');
-
-var log = new bunyan({
-    'name': 'parser.test.js',
-    'level': process.env['LOG_LEVEL'] || 'debug'
-});
+var helper = require('./helper.js');
 
 var test = helper.test;
 

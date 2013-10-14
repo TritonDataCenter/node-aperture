@@ -1,3 +1,4 @@
+// Copyright (c) 2013, Joyent, Inc. All rights reserved.
  %lex
 
 digit           [0-9]
