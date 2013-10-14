@@ -183,3 +183,70 @@ test('conditions not met', function (t) {
 
     t.done();
 });
+
+
+test('list', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function (l, r) {return (l === r); }
+            }
+        }
+    });
+    var policy = {
+        principals: {'Fred': true},
+        effect: true,
+        actions: {'read': true },
+        resources: {'foo': true },
+        conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
+    };
+    var context = {
+        principal: 'Fred',
+        action: 'read',
+        resource: 'foo',
+        conditions: {
+            'sourceip': ['1.1.1.1', '2.2.2.2']
+        }
+    };
+    var result = e.evaluate(policy, context);
+    t.ok(result.effect === false);
+    t.ok(result.audit.principal === true);
+    t.ok(result.audit.action === true);
+    t.ok(result.audit.resource === true);
+    t.deepEqual(result.audit.conditions, {'sourceip': false});
+
+    t.done();
+});
+
+test('list pass', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function (l, r) {return (l === r); }
+            }
+        }
+    });
+    var policy = {
+        principals: {'Fred': true},
+        effect: true,
+        actions: {'read': true },
+        resources: {'foo': true },
+        conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
+    };
+    var context = {
+        principal: 'Fred',
+        action: 'read',
+        resource: 'foo',
+        conditions: {
+            'sourceip': ['0.0.0.0', '2.2.2.2']
+        }
+    };
+    var result = e.evaluate(policy, context);
+    t.ok(result.effect === false);
+    t.ok(result.audit.principal === true);
+    t.ok(result.audit.action === true);
+    t.ok(result.audit.resource === true);
+    t.deepEqual(result.audit.conditions, {'sourceip': false});
+
+    t.done();
+});
