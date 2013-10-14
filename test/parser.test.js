@@ -73,6 +73,7 @@ test('basic', function (t) {
         resources: {'foo': true },
         conditions: [ '=', { name: 'sourceip', type: 'ip'}, '0.0.0.0']
     };
+    var actual;
     for (var i = 0; i < texts.length; i++) {
         actual = p.parse(texts[i]);
         t.deepEqual(expected, actual);
@@ -88,7 +89,7 @@ test('lists, length 2', function (t) {
     var expected = {
         principals: {'Fred': true, 'Bob': true},
         effect: true,
-        actions: {'read': true , 'write': true},
+        actions: {'read': true, 'write': true},
         resources: {'foo': true, 'bar': true },
         conditions: [ '=', { name: 'sourceip', type: 'ip'}, '0.0.0.0']
     };
@@ -105,7 +106,7 @@ test('lists, length 3', function (t) {
     var expected = {
         principals: {'Fred': true, 'Bob': true, 'George': true},
         effect: true,
-        actions: {'read': true , 'write': true, 'modify': true},
+        actions: {'read': true, 'write': true, 'modify': true},
         resources: {'foo': true, 'bar': true, 'baz': true},
         conditions: ['and',
             ['and',
@@ -194,7 +195,7 @@ test('validation', function (t) {
         t.equal('parse error: ' +
             'unable to validate value "0.0.0.0" as type "ip": ' +
             'Object #<Object> has no method \'validate\'',
-            e.message)
+            e.message);
     }
 
     parser = new Parser({
@@ -222,7 +223,7 @@ test('parentheses', function (t) {
     var expected = {
         principals: {'Fred': true, 'Bob': true, 'George': true},
         effect: true,
-        actions: {'read': true , 'write': true, 'modify': true},
+        actions: {'read': true, 'write': true, 'modify': true},
         resources: {'foo': true, 'bar': true, 'baz': true},
         conditions: ['and',
             [ '=',

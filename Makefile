@@ -26,7 +26,7 @@ NPM		:= npm
 #
 JISON	:= ./node_modules/.bin/jison
 DOC_FILES	 = index.restdown
-JS_FILES	:= $(shell find lib test -name '*.js')
+JS_FILES	:= $(shell find lib test -name '*.js' | grep -v language.js)
 JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE   = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
@@ -53,5 +53,5 @@ lib/language.js: lib/language.jison $(JISON)
 test: $(NODEUNIT) lib/language.js
 	find test -name '*.test.js' | xargs -n 1 $(NODEUNIT)
 
-include ./Makefile.deps
-include ./Makefile.targ
+include ./tools/mk/Makefile.deps
+include ./tools/mk/Makefile.targ

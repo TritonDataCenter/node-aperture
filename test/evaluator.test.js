@@ -62,9 +62,9 @@ test('principal mismatch', function (t) {
     var result = e.evaluate(policy, context);
     t.ok(result.effect === false);
     t.ok(result.audit.principal === false);
-    t.equal(typeof(result.audit.action), 'undefined');
-    t.equal(typeof(result.audit.resource), 'undefined');
-    t.equal(typeof(result.audit.condition), 'undefined');
+    t.equal(typeof (result.audit.action), 'undefined');
+    t.equal(typeof (result.audit.resource), 'undefined');
+    t.equal(typeof (result.audit.condition), 'undefined');
     t.done();
 });
 
@@ -91,8 +91,8 @@ test('action mismatch', function (t) {
     t.ok(result.effect === false);
     t.ok(result.audit.principal === true);
     t.ok(result.audit.action === false);
-    t.equal(typeof(result.audit.resource), 'undefined');
-    t.equal(typeof(result.audit.condition), 'undefined');
+    t.equal(typeof (result.audit.resource), 'undefined');
+    t.equal(typeof (result.audit.condition), 'undefined');
     t.done();
 });
 
@@ -120,7 +120,7 @@ test('resource mismatch', function (t) {
     t.ok(result.audit.principal === true);
     t.ok(result.audit.action === true);
     t.ok(result.audit.resource === false);
-    t.equal(typeof(result.audit.condition), 'undefined');
+    t.equal(typeof (result.audit.condition), 'undefined');
     t.done();
 });
 
