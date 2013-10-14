@@ -12,6 +12,38 @@ var log = new bunyan({
 
 var test = helper.test;
 
+var strings = [
+    'Fred can read foo',
+    'Fred can read foo when sourceip::ip = 0.0.0.0',
+    'Fred can read foo where sourceip::ip = 0.0.0.0',
+    'Fred can read foo if sourceip::ip = 0.0.0.0',
+    'Fred can read foo if sourceip = 0.0.0.0',
+    'Fred and Bob can read and write foo and bar when sourceip::ip = 0.0.0.0',
+    'Fred, George, and Bob can read, write, and modify ' +
+        'foo, bar, and baz when sourceip::ip = 0.0.0.0 and ' +
+        'requesttime::datetime >= 2013-10-01T13:00:00 and ' +
+        'requesttime::datetime < 2013-10-01T14:00:00',
+    'Fred can read foo when sourceip::ip = "::ffff:ada0:d182"',
+    'Fred can read "this resource" when some::string = "foo bar"',
+    'Fred and "and" can read foo',
+    'Fred can read foo when sourceip in (0.0.0.0)',
+    'Fred can read foo when sourceip in (0.0.0.0, 1.1.1.1)',
+    'Fred can read foo when sourceip in (0.0.0.0, 1.1.1.1, 2.2.2.2)',
+    'Fred can read',
+    'Can read foo',
+    'Can read'
+];
+
+strings.forEach(function (s) {
+    test(s, function (t) {
+        var p = new Parser();
+        t.doesNotThrow(function () {
+            p.parse(s);
+        });
+        t.done();
+    });
+});
+
 test('no conditions', function (t) {
     var p = new Parser();
     var actual = p.parse('Fred can read foo');
@@ -19,7 +51,8 @@ test('no conditions', function (t) {
         principals: {'Fred': true},
         effect: true,
         actions: {'read': true },
-        resources: {'foo': true }
+        resources: {'foo': true },
+        conditions: undefined
     };
     t.deepEqual(expected, actual);
     t.done();
@@ -229,5 +262,46 @@ test('string literals', function (t) {
         p.parse('Fred and "and" can read foo');
     });
 
+    t.done();
+});
+
+test('in [x, y, z]', function (t) {
+    var p = new Parser();
+    var actual = p.parse('Fred can read foo when sourceip::ip in ' +
+        '(0.0.0.0, 1.1.1.1)');
+    var expected = {
+        principals: {'Fred': true},
+        effect: true,
+        actions: {'read': true },
+        resources: {'foo': true },
+        conditions: [ '=', { name: 'sourceip', type: 'ip'},
+            ['0.0.0.0', '1.1.1.1']]
+    };
+    t.deepEqual(expected, actual);
+    t.done();
+
+});
+
+test('list validation', function (t) {
+    t.expect(3);
+    var parser = new Parser({
+        types: {
+            'ip': {
+                '=': function () {},
+                'validate': function (value) {
+                    if (!this.ran) {
+                        t.equal(value, '0.0.0.0');
+                    } else {
+                        t.equal(value, '1.1.1.1');
+                    }
+                    this.ran = true;
+                }
+            }
+        }
+    });
+    var text = 'Fred can read foo if sourceip::ip in (0.0.0.0, 1.1.1.1)';
+    t.doesNotThrow(function () {
+        parser.parse(text);
+    });
     t.done();
 });

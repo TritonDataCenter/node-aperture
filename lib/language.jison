@@ -28,6 +28,8 @@ stresc          "\\"
 "ANYTHING"      return 'ANYTHING';
 "*"             return '*';
 
+"IN"            return 'IN';
+
 "::"            return '::';
 ","             return ',';
 "("             return '(';
@@ -67,23 +69,44 @@ string
     ;
 
 rule
-    : list effect list list if conditions EOF
+    : list effect list list conditions EOF
         {
             return {
                 principals: $1,
                 effect: $2,
                 actions: $3,
                 resources: $4,
-                conditions: $6
+                conditions: $5
             };
         }
-    | list effect list list EOF
+    | list effect list conditions EOF // implied resources
         {
             return {
                 principals: $1,
                 effect: $2,
                 actions: $3,
-                resources: $4
+                resources: undefined,
+                conditions: $4
+            };
+        }
+    | effect list list conditions EOF // implied principals
+        {
+            return {
+                principals: undefined,
+                effect: $1,
+                actions: $2,
+                resources: $3,
+                conditions: $4
+            };
+        }
+    | effect list conditions EOF // implied principals and resources
+        {
+            return {
+                principals: undefined,
+                effect: $1,
+                actions: $2,
+                resources: undefined,
+                conditions: $3
             };
         }
     ;
@@ -114,22 +137,33 @@ long_list
             $$[$6] = true;
         }
     | string ',' long_list
-        { $3[$1] = true; $$ = $3; }
+        {
+            $3[$1] = true;
+            $$ = $3;
+        }
     ;
 
 
 
 effect
     : CAN
-        { $$ = true; }
+        {
+            $$ = true;
+        }
     | CAN NOT
-        { $$ = false; }
+        {
+            $$ = false;
+        }
     ;
 
 
 
 conditions
-    : or_con
+    : if or_con
+        {
+            $$ = $2;
+        }
+    | // conditions can be empty
     ;
 
 or_con
@@ -156,26 +190,63 @@ unary_con
     | condition
     ;
 
+
 condition
-    : string '::' string string string
+    : lhs op rhs
         {
-            var name = $1;
-            var type = $3;
-            var op = $4;
-            var value = $5;
-
-            yy.validate(op, name, value, type);
-            $$ = [ op, { name: name, type: type }, value ];
-        }
-    | string string string
-        {
-            var name = $1;
+            var lhs = $1;
             var op = $2;
-            var value = $3;
-
-            yy.validate(op, name, value);
-            $$ = [ op, { name: name }, value ];
+            var rhs = $3;
+            yy.validate(op, lhs.name, rhs, lhs.type);
+            $$ = [ op, lhs, rhs ];
         }
-    | '(' conditions ')'
-        { $$ = $2 }
+    | lhs IN rhs
+        {
+            var lhs = $1;
+            var op = '=';
+            var rhs = $3;
+            rhs.forEach(function (i) {
+                yy.validate(op, lhs.name, i, lhs.type);
+            });
+            $$ = [ op, lhs, rhs ];
+        }
+    | '(' or_con ')'
+        {
+            $$ = $2;
+        }
+    ;
+
+lhs
+    : string '::' string
+        {
+            $$ = {name: $1, type: $3};
+        }
+    | string
+        {
+            $$ = {name: $1};
+        }
+    ;
+
+op
+    : string
+    ;
+
+rhs
+    : string
+    | '(' comma_separated_list ')'
+        {
+            $$ = $2;
+        }
+    ;
+
+comma_separated_list
+    : string
+        {
+            $$ = [ $1 ];
+        }
+    | comma_separated_list ',' string
+        {
+            $1.push($3);
+            $$ = $1;
+        }
     ;
