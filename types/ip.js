@@ -31,7 +31,7 @@ function validate(input) {
     if (input.length > 1) {
         upper = addr.kind() === 'ipv6' ? 128 : 32;
         if (input[1] < 0 || input[1] > upper) {
-            throw new Error('prefix size must be between 0 and ' + upper);
+            throw new Error('ip: prefix size must be between 0 and ' + upper);
         }
     }
 }
