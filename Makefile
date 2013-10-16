@@ -26,7 +26,7 @@ NPM		:= npm
 #
 JISON	:= ./node_modules/.bin/jison
 DOC_FILES	 = index.restdown
-JS_FILES	:= $(shell find lib test -name '*.js' | grep -v language.js)
+JS_FILES	:= $(shell find lib test -name '*.js')
 JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE   = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
@@ -46,11 +46,11 @@ $(JISON):
 $(NODEUNIT):
 	$(NPM) install
 
-lib/language.js: lib/language.jison $(JISON)
+gen/language.js: lib/language.jison $(JISON)
 	$(JISON) -o $@ $<
 
 .PHONY: test
-test: $(NODEUNIT) lib/language.js
+test: $(NODEUNIT) gen/language.js
 	find test -name '*.test.js' | xargs -n 1 $(NODEUNIT)
 
 include ./tools/mk/Makefile.deps

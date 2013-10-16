@@ -1,8 +1,14 @@
 // Copyright (c) 2013, Joyent, Inc. All rights reserved.
-var Evaluator = require('../lib/evaluator');
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+var Evaluator = require('../lib/evaluator.js').Evaluator;
 var helper = require('./helper.js');
 
 var test = helper.test;
+
 
 
 test('basic allow', function (t) {
@@ -62,6 +68,7 @@ test('principal mismatch', function (t) {
     t.done();
 });
 
+
 test('action mismatch', function (t) {
     var e = new Evaluator({
         types: {
@@ -90,6 +97,7 @@ test('action mismatch', function (t) {
     t.done();
 });
 
+
 test('resource mismatch', function (t) {
     var e = new Evaluator({
         types: {
@@ -117,6 +125,7 @@ test('resource mismatch', function (t) {
     t.equal(typeof (result.audit.condition), 'undefined');
     t.done();
 });
+
 
 test('conditions met', function (t) {
     var e = new Evaluator({
@@ -150,6 +159,7 @@ test('conditions met', function (t) {
 
     t.done();
 });
+
 
 test('conditions not met', function (t) {
     var e = new Evaluator({
@@ -218,6 +228,7 @@ test('list', function (t) {
 
     t.done();
 });
+
 
 test('list pass', function (t) {
     var e = new Evaluator({

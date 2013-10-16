@@ -1,8 +1,15 @@
 // Copyright (c) 2013, Joyent, Inc. All rights reserved.
-var Parser = require('../lib/parser.js');
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+var Parser = require('../lib/parser.js').Parser;
 var helper = require('./helper.js');
 
 var test = helper.test;
+
+
 
 var strings = [
     'Fred can read foo',
@@ -36,6 +43,7 @@ strings.forEach(function (s) {
     });
 });
 
+
 test('no conditions', function (t) {
     var p = new Parser();
     var actual = p.parse('Fred can read foo');
@@ -49,6 +57,7 @@ test('no conditions', function (t) {
     t.deepEqual(expected, actual);
     t.done();
 });
+
 
 test('basic', function (t) {
     var p = new Parser();
@@ -73,6 +82,7 @@ test('basic', function (t) {
     t.done();
 });
 
+
 test('lists, length 2', function (t) {
     var p = new Parser();
     var actual = p.parse('Fred and Bob can read and write foo and bar when ' +
@@ -88,6 +98,7 @@ test('lists, length 2', function (t) {
     t.deepEqual(expected, actual);
     t.done();
 });
+
 
 test('lists, length 3', function (t) {
     var p = new Parser();
@@ -118,6 +129,7 @@ test('lists, length 3', function (t) {
     t.done();
 
 });
+
 
 test('validation', function (t) {
 
@@ -206,6 +218,7 @@ test('validation', function (t) {
 });
 
 
+
 test('parentheses', function (t) {
     var p = new Parser();
     var actual = p.parse('Fred, George, and Bob can read, write, and modify ' +
@@ -236,12 +249,13 @@ test('parentheses', function (t) {
 
 });
 
+
 test('string literals', function (t) {
     var p = new Parser();
 
     t.throws(function () {
         p.parse('Fred can read foo when sourceip::ip = ::ffff:ada0:d182');
-    });
+    }, /parse error/);
 
     t.doesNotThrow(function () {
         p.parse('Fred can read foo when sourceip::ip = "::ffff:ada0:d182"');
@@ -249,7 +263,7 @@ test('string literals', function (t) {
 
     t.throws(function () {
         p.parse('Fred and and can read foo');
-    });
+    }, /parse error/);
 
     t.doesNotThrow(function () {
         p.parse('Fred and "and" can read foo');
@@ -257,6 +271,7 @@ test('string literals', function (t) {
 
     t.done();
 });
+
 
 test('condition lists "in (x, y, z)"', function (t) {
     var p = new Parser();
@@ -274,6 +289,7 @@ test('condition lists "in (x, y, z)"', function (t) {
     t.done();
 
 });
+
 
 test('condition list validation', function (t) {
     t.expect(3);
@@ -299,11 +315,12 @@ test('condition list validation', function (t) {
     t.done();
 });
 
+
 test('"IN" can only be used with lists', function (t) {
     var p = new Parser();
     var text = 'Fred can read foo when sourceip::ip in 1.1.1.1';
     t.throws(function () {
         p.parse(text);
-    });
+    }, /parse error/);
     t.done();
 });
