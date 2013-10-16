@@ -258,7 +258,7 @@ test('string literals', function (t) {
     t.done();
 });
 
-test('in [x, y, z]', function (t) {
+test('condition lists "in (x, y, z)"', function (t) {
     var p = new Parser();
     var actual = p.parse('Fred can read foo when sourceip::ip in ' +
         '(0.0.0.0, 1.1.1.1)');
@@ -267,7 +267,7 @@ test('in [x, y, z]', function (t) {
         effect: true,
         actions: {'read': true },
         resources: {'foo': true },
-        conditions: [ '=', { name: 'sourceip', type: 'ip'},
+        conditions: [ 'in', { name: 'sourceip', type: 'ip'},
             ['0.0.0.0', '1.1.1.1']]
     };
     t.deepEqual(expected, actual);
@@ -275,12 +275,12 @@ test('in [x, y, z]', function (t) {
 
 });
 
-test('list validation', function (t) {
+test('condition list validation', function (t) {
     t.expect(3);
     var parser = new Parser({
         types: {
             'ip': {
-                '=': function () {},
+                'in': function () {},
                 'validate': function (value) {
                     if (!this.ran) {
                         t.equal(value, '0.0.0.0');
@@ -295,6 +295,15 @@ test('list validation', function (t) {
     var text = 'Fred can read foo if sourceip::ip in (0.0.0.0, 1.1.1.1)';
     t.doesNotThrow(function () {
         parser.parse(text);
+    });
+    t.done();
+});
+
+test('"IN" can only be used with lists', function (t) {
+    var p = new Parser();
+    var text = 'Fred can read foo when sourceip::ip in 1.1.1.1';
+    t.throws(function () {
+        p.parse(text);
     });
     t.done();
 });

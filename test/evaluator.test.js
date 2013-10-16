@@ -198,14 +198,15 @@ test('list', function (t) {
         effect: true,
         actions: {'read': true },
         resources: {'foo': true },
-        conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
+        conditions: [ '=', {name: 'sourceip', type: 'ip'},
+            ['0.0.0.0', '1.1.1.1']]
     };
     var context = {
         principal: 'Fred',
         action: 'read',
         resource: 'foo',
         conditions: {
-            'sourceip': ['1.1.1.1', '2.2.2.2']
+            'sourceip': '2.2.2.2'
         }
     };
     var result = e.evaluate(policy, context);
@@ -231,22 +232,23 @@ test('list pass', function (t) {
         effect: true,
         actions: {'read': true },
         resources: {'foo': true },
-        conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
+        conditions: [ 'in', {name: 'sourceip', type: 'ip'},
+            ['0.0.0.0', '1.1.1.1']]
     };
     var context = {
         principal: 'Fred',
         action: 'read',
         resource: 'foo',
         conditions: {
-            'sourceip': ['0.0.0.0', '2.2.2.2']
+            'sourceip': '1.1.1.1'
         }
     };
     var result = e.evaluate(policy, context);
-    t.ok(result.effect === false);
+    t.ok(result.effect === true);
     t.ok(result.audit.principal === true);
     t.ok(result.audit.action === true);
     t.ok(result.audit.resource === true);
-    t.deepEqual(result.audit.conditions, {'sourceip': false});
+    t.deepEqual(result.audit.conditions, {'sourceip': true});
 
     t.done();
 });

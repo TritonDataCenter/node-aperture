@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Joyent, Inc. All rights reserved.
  %lex
 
-digit           [0-9]
 stresc          "\\"
 
 %options case-insensitive
@@ -201,11 +200,11 @@ condition
             yy.validate(op, lhs.name, rhs, lhs.type);
             $$ = [ op, lhs, rhs ];
         }
-    | lhs IN rhs
+    | lhs IN '(' comma_separated_list ')'
         {
             var lhs = $1;
-            var op = '=';
-            var rhs = $3;
+            var op = $2;
+            var rhs = $4;
             rhs.forEach(function (i) {
                 yy.validate(op, lhs.name, i, lhs.type);
             });
@@ -234,10 +233,6 @@ op
 
 rhs
     : string
-    | '(' comma_separated_list ')'
-        {
-            $$ = $2;
-        }
     ;
 
 comma_separated_list
