@@ -28,12 +28,7 @@ test('basic allow', function (t) {
         action: 'read',
         resource: 'foo'
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === true);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === true);
-    t.ok(result.audit.resource === true);
-    t.ok(result.audit.conditions === true);
+    t.ok(e.evaluate(policy, context));
     t.end();
 });
 
@@ -57,12 +52,7 @@ test('principal mismatch', function (t) {
         action: 'read',
         resource: 'foo'
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === false);
-    t.ok(result.audit.principal === false);
-    t.equal(typeof (result.audit.action), 'undefined');
-    t.equal(typeof (result.audit.resource), 'undefined');
-    t.equal(typeof (result.audit.condition), 'undefined');
+    t.notOk(e.evaluate(policy, context));
     t.end();
 });
 
@@ -86,12 +76,7 @@ test('action mismatch', function (t) {
         action: 'write',
         resource: 'foo'
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === false);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === false);
-    t.equal(typeof (result.audit.resource), 'undefined');
-    t.equal(typeof (result.audit.condition), 'undefined');
+    t.notOk(e.evaluate(policy, context));
     t.end();
 });
 
@@ -115,12 +100,7 @@ test('resource mismatch', function (t) {
         action: 'read',
         resource: 'bar'
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === false);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === true);
-    t.ok(result.audit.resource === false);
-    t.equal(typeof (result.audit.condition), 'undefined');
+    t.notOk(e.evaluate(policy, context));
     t.end();
 });
 
@@ -148,13 +128,7 @@ test('conditions met', function (t) {
             'sourceip': '0.0.0.0'
         }
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === true);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === true);
-    t.ok(result.audit.resource === true);
-    t.deepEqual(result.audit.conditions, {'sourceip': true});
-
+    t.ok(e.evaluate(policy, context));
     t.end();
 });
 
@@ -182,13 +156,7 @@ test('conditions not met', function (t) {
             'sourceip': '2.2.2.2'
         }
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === false);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === true);
-    t.ok(result.audit.resource === true);
-    t.deepEqual(result.audit.conditions, {'sourceip': false});
-
+    t.notOk(e.evaluate(policy, context));
     t.end();
 });
 
@@ -217,13 +185,7 @@ test('list', function (t) {
             'sourceip': '2.2.2.2'
         }
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === false);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === true);
-    t.ok(result.audit.resource === true);
-    t.deepEqual(result.audit.conditions, {'sourceip': false});
-
+    t.notOk(e.evaluate(policy, context));
     t.end();
 });
 
@@ -252,12 +214,6 @@ test('list pass', function (t) {
             'sourceip': '1.1.1.1'
         }
     };
-    var result = e.evaluate(policy, context);
-    t.ok(result.effect === true);
-    t.ok(result.audit.principal === true);
-    t.ok(result.audit.action === true);
-    t.ok(result.audit.resource === true);
-    t.deepEqual(result.audit.conditions, {'sourceip': true});
-
+    t.ok(e.evaluate(policy, context));
     t.end();
 });
