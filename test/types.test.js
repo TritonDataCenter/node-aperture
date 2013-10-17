@@ -4,10 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-var helper = require('./helper.js');
 var types = require('../types');
-
-var test = helper.test;
+var test = require('tap').test;
 
 
 test('ip: validate', function (t) {
@@ -22,7 +20,7 @@ test('ip: validate', function (t) {
     ips.forEach(function (ip) {
         t.doesNotThrow(function () {
                 types.ip.validate(ip);
-        }, Object, ip);
+        }, ip);
     });
 
     ips = [
@@ -35,10 +33,10 @@ test('ip: validate', function (t) {
     ips.forEach(function (ip) {
         t.throws(function () {
             types.ip.validate(ip);
-        }, /ip/, ip);
+        }, ip);
     });
 
-    t.done();
+    t.end();
 });
 
 
@@ -73,7 +71,7 @@ test('ip: eq', function (t) {
         t.notOk(types.ip['='](pair[0], pair[1]), pair);
     });
 
-    t.done();
+    t.end();
 });
 
 
@@ -91,7 +89,7 @@ test('string: ops', function (t) {
     t.notOk(types.string['>']('a', 'b'));
     t.notOk(types.string['<=']('b', 'a'));
     t.notOk(types.string['>=']('a', 'b'));
-    t.done();
+    t.end();
 });
 
 
@@ -106,7 +104,7 @@ test('date: validate', function (t) {
     dates.forEach(function (date) {
         t.doesNotThrow(function () {
             types.date.validate(date);
-        }, Object, date);
+        }, date);
     });
 
     dates = [
@@ -117,10 +115,10 @@ test('date: validate', function (t) {
     dates.forEach(function (date) {
         t.throws(function () {
             types.date.validate(date);
-        }, /date/, date);
+        }, date);
     });
 
-    t.done();
+    t.end();
 });
 
 
@@ -133,7 +131,7 @@ test('day: validate', function (t) {
     days.forEach(function (day) {
         t.doesNotThrow(function () {
             types.day.validate(day);
-        }, Object, day);
+        }, day);
     });
 
     days = [
@@ -145,10 +143,10 @@ test('day: validate', function (t) {
     days.forEach(function (day) {
         t.throws(function () {
             types.day.validate(day);
-        }, /day/, day);
+        }, day);
     });
 
-    t.done();
+    t.end();
 });
 
 
@@ -164,7 +162,7 @@ test('time: validate', function (t) {
     times.forEach(function (time) {
         t.doesNotThrow(function () {
             types.time.validate(time);
-        }, Object, time);
+        }, time);
     });
 
     times = [
@@ -174,8 +172,8 @@ test('time: validate', function (t) {
     times.forEach(function (time) {
         t.throws(function () {
             types.time.validate(time);
-        }, /time/, time);
+        }, time);
     });
 
-    t.done();
+    t.end();
 });

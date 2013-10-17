@@ -5,9 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 var Parser = require('../lib/parser.js').Parser;
-var helper = require('./helper.js');
-
-var test = helper.test;
+var test = require('tap').test;
 
 
 
@@ -39,7 +37,7 @@ strings.forEach(function (s) {
         t.doesNotThrow(function () {
             p.parse(s);
         });
-        t.done();
+        t.end();
     });
 });
 
@@ -55,7 +53,7 @@ test('no conditions', function (t) {
         conditions: undefined
     };
     t.deepEqual(expected, actual);
-    t.done();
+    t.end();
 });
 
 
@@ -79,7 +77,7 @@ test('basic', function (t) {
         actual = p.parse(texts[i]);
         t.deepEqual(expected, actual);
     }
-    t.done();
+    t.end();
 });
 
 
@@ -96,7 +94,7 @@ test('lists, length 2', function (t) {
         conditions: [ '=', { name: 'sourceip', type: 'ip'}, '0.0.0.0']
     };
     t.deepEqual(expected, actual);
-    t.done();
+    t.end();
 });
 
 
@@ -126,7 +124,7 @@ test('lists, length 3', function (t) {
         ]
     };
     t.deepEqual(expected, actual);
-    t.done();
+    t.end();
 
 });
 
@@ -138,20 +136,15 @@ test('validation', function (t) {
     });
     var text = 'Fred can read foo when sourceip = 0.0.0.0';
 
-    try {
+    t.throws(function () {
         parser.parse(text);
-        t.fail('block should throw');
-    } catch (e) {
-        t.equal('parse error: no type for "sourceip"', e.message);
-    }
+    });
 
     text = 'Fred can read foo when sourceip::ip = 0.0.0.0';
-    try {
+    t.throws(function () {
         parser.parse(text);
-        t.fail('block should throw');
-    } catch (e) {
-        t.equal('parse error: unknown type "ip"', e.message);
-    }
+    });
+
 
     parser = new Parser({
         types: {
@@ -160,13 +153,11 @@ test('validation', function (t) {
             }
         }
     });
-    try {
+
+    t.throws(function () {
         parser.parse(text);
-        t.fail('block should throw');
-    } catch (e) {
-        t.equal('parse error: unsupported operation "=" on type "ip"',
-            e.message);
-    }
+    });
+
 
     parser = new Parser({
         types: {
@@ -176,14 +167,10 @@ test('validation', function (t) {
             }
         }
     });
-    try {
+
+    t.throws(function () {
         parser.parse(text);
-        t.fail('block should throw');
-    } catch (e) {
-        t.equal('parse error: ' +
-            'unable to validate value "0.0.0.0" as type "ip": bad',
-            e.message);
-    }
+    });
 
     parser = new Parser({
         types: {
@@ -192,15 +179,9 @@ test('validation', function (t) {
             }
         }
     });
-    try {
+    t.throws(function () {
         parser.parse(text);
-        t.fail('block should throw');
-    } catch (e) {
-        t.equal('parse error: ' +
-            'unable to validate value "0.0.0.0" as type "ip": ' +
-            'Object #<Object> has no method \'validate\'',
-            e.message);
-    }
+    });
 
     parser = new Parser({
         types: {
@@ -214,7 +195,7 @@ test('validation', function (t) {
         parser.parse(text);
     });
 
-    t.done();
+    t.end();
 });
 
 
@@ -245,7 +226,7 @@ test('parentheses', function (t) {
         ]
     };
     t.deepEqual(expected, actual);
-    t.done();
+    t.end();
 
 });
 
@@ -255,7 +236,7 @@ test('string literals', function (t) {
 
     t.throws(function () {
         p.parse('Fred can read foo when sourceip::ip = ::ffff:ada0:d182');
-    }, /parse error/);
+    });
 
     t.doesNotThrow(function () {
         p.parse('Fred can read foo when sourceip::ip = "::ffff:ada0:d182"');
@@ -263,13 +244,13 @@ test('string literals', function (t) {
 
     t.throws(function () {
         p.parse('Fred and and can read foo');
-    }, /parse error/);
+    });
 
     t.doesNotThrow(function () {
         p.parse('Fred and "and" can read foo');
     });
 
-    t.done();
+    t.end();
 });
 
 
@@ -286,13 +267,13 @@ test('condition lists "in (x, y, z)"', function (t) {
             ['0.0.0.0', '1.1.1.1']]
     };
     t.deepEqual(expected, actual);
-    t.done();
+    t.end();
 
 });
 
 
 test('condition list validation', function (t) {
-    t.expect(3);
+    t.plan(3);
     var parser = new Parser({
         types: {
             'ip': {
@@ -312,7 +293,7 @@ test('condition list validation', function (t) {
     t.doesNotThrow(function () {
         parser.parse(text);
     });
-    t.done();
+    t.end();
 });
 
 
@@ -321,6 +302,6 @@ test('"IN" can only be used with lists', function (t) {
     var text = 'Fred can read foo when sourceip::ip in 1.1.1.1';
     t.throws(function () {
         p.parse(text);
-    }, /parse error/);
-    t.done();
+    });
+    t.end();
 });

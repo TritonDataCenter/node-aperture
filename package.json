@@ -13,11 +13,12 @@
     },
     "devDependencies": {
         "jison": "0.4.13",
-        "nodeunit": "0.8.1",
+        "tap": "0.4.4",
         "once": "1.2.0"
     },
     "scripts": {
-        "prepublish": "jison lib/language.jison -o gen/language.js"
+        "prepublish": "jison lib/language.jison -o gen/language.js",
+        "test": "tap ./test"
     },
     "engines": {
         "node": ">=0.10"

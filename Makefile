@@ -17,14 +17,13 @@
 #
 # Tools
 #
-NODEUNIT	:= ./node_modules/.bin/nodeunit
-BUNYAN		:= ./node_modules/.bin/bunyan
+TAP		:= ./node_modules/.bin/tap
+JISON	:= ./node_modules/.bin/jison
 NPM		:= npm
 
 #
 # Files
 #
-JISON	:= ./node_modules/.bin/jison
 DOC_FILES	 = index.restdown
 JS_FILES	:= $(shell find lib test -name '*.js')
 JSL_CONF_NODE	 = tools/jsl.node.conf
@@ -32,7 +31,7 @@ JSL_FILES_NODE   = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS    = -f tools/jsstyle.conf
 
-CLEAN_FILES	+= node_modules lib/language.js
+CLEAN_FILES	+= node_modules gen/language.js
 #
 # Repo-specific targets
 #
@@ -43,15 +42,15 @@ all: lib/parser.js
 $(JISON):
 	$(NPM) install
 
-$(NODEUNIT):
+$(TAP):
 	$(NPM) install
 
 gen/language.js: lib/language.jison $(JISON)
 	$(JISON) -o $@ $<
 
 .PHONY: test
-test: $(NODEUNIT) gen/language.js
-	find test -name '*.test.js' | xargs -n 1 $(NODEUNIT)
+test: $(TAP) gen/language.js
+	$(NPM) test
 
 include ./tools/mk/Makefile.deps
 include ./tools/mk/Makefile.targ

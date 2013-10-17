@@ -5,9 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 var Evaluator = require('../lib/evaluator.js').Evaluator;
-var helper = require('./helper.js');
-
-var test = helper.test;
+var test = require('tap').test;
 
 
 
@@ -36,7 +34,7 @@ test('basic allow', function (t) {
     t.ok(result.audit.action === true);
     t.ok(result.audit.resource === true);
     t.ok(result.audit.conditions === true);
-    t.done();
+    t.end();
 });
 
 
@@ -65,7 +63,7 @@ test('principal mismatch', function (t) {
     t.equal(typeof (result.audit.action), 'undefined');
     t.equal(typeof (result.audit.resource), 'undefined');
     t.equal(typeof (result.audit.condition), 'undefined');
-    t.done();
+    t.end();
 });
 
 
@@ -94,7 +92,7 @@ test('action mismatch', function (t) {
     t.ok(result.audit.action === false);
     t.equal(typeof (result.audit.resource), 'undefined');
     t.equal(typeof (result.audit.condition), 'undefined');
-    t.done();
+    t.end();
 });
 
 
@@ -123,7 +121,7 @@ test('resource mismatch', function (t) {
     t.ok(result.audit.action === true);
     t.ok(result.audit.resource === false);
     t.equal(typeof (result.audit.condition), 'undefined');
-    t.done();
+    t.end();
 });
 
 
@@ -157,7 +155,7 @@ test('conditions met', function (t) {
     t.ok(result.audit.resource === true);
     t.deepEqual(result.audit.conditions, {'sourceip': true});
 
-    t.done();
+    t.end();
 });
 
 
@@ -191,7 +189,7 @@ test('conditions not met', function (t) {
     t.ok(result.audit.resource === true);
     t.deepEqual(result.audit.conditions, {'sourceip': false});
 
-    t.done();
+    t.end();
 });
 
 
@@ -226,7 +224,7 @@ test('list', function (t) {
     t.ok(result.audit.resource === true);
     t.deepEqual(result.audit.conditions, {'sourceip': false});
 
-    t.done();
+    t.end();
 });
 
 
@@ -261,5 +259,5 @@ test('list pass', function (t) {
     t.ok(result.audit.resource === true);
     t.deepEqual(result.audit.conditions, {'sourceip': true});
 
-    t.done();
+    t.end();
 });
