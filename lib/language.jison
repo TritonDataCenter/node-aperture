@@ -6,13 +6,25 @@
 
 %lex
 
-stresc          "\\"
+// define regular expressions to be referenced in the next section
+esc          "\\"
+
+// https://github.com/cjihrig/jsparser
+RegularExpressionNonTerminator [^\n\r]
+RegularExpressionBackslashSequence \\{RegularExpressionNonTerminator}
+RegularExpressionClassChar [^\n\r\]\\]|{RegularExpressionBackslashSequence}
+RegularExpressionClass \[{RegularExpressionClassChar}*\]
+RegularExpressionFlags [a-z]*
+RegularExpressionFirstChar ([^\n\r\*\\\/\[])|{RegularExpressionBackslashSequence}|{RegularExpressionClass}
+RegularExpressionChar ([^\n\r\\\/\[])|{RegularExpressionBackslashSequence}|{RegularExpressionClass}
+RegularExpressionBody {RegularExpressionFirstChar}{RegularExpressionChar}*
+RegularExpressionLiteral \/{RegularExpressionBody}\/{RegularExpressionFlags}
 
 %options case-insensitive
 
 %%
 
-\s+             /* skip whitespace */
+\s+             /* skip whritespace */
 <<EOF>>         return 'EOF';
 
 "AND"           return 'AND';
@@ -31,7 +43,6 @@ stresc          "\\"
 "ALL"           return 'ALL';
 "EVERYTHING"    return 'EVERYTHING';
 "ANYTHING"      return 'ANYTHING';
-"*"             return '*';
 
 "IN"            return 'IN';
 
@@ -40,41 +51,44 @@ stresc          "\\"
 "("             return '(';
 ")"             return ')';
 
-\"(?:{stresc}["bfnrt/{stresc}]|{stresc}"u"[a-fA-F0-9]{4}|[^"{stresc}])*\"
+
+// /RegexBody/flags::regex
+{RegularExpressionLiteral}"::regex"p?
+    {
+        yytext = yytext.substr(0, yytext.lastIndexOf('::'));
+        return "REGEX_LITERAL";
+    }
+
+
+// string enclosed in quotes
+\"(?:{esc}["bfnrt/{esc}]|{esc}"u"[a-fA-F0-9]{4}|[^"{esc}])*\"
     {
         yytext = yytext.substr(1,yyleng-2);
         return 'STRING_LITERAL';
     }
 
-([^\s,():](\:(?!\:))?)+ return 'STRING';
+
+// any string without parens or commas or double colon ('::')
+([^\s,():](\:(?!\:))?)+
+    {
+        if (yytext === '*') {
+            return '*';
+        } else if (yytext.match(/[*]/)) {
+            return 'FUZZY_STRING';
+        } else {
+            return 'STRING';
+        }
+    }
 
 /lex
 
 
-%start rule
+%start Rule
 
 %%
 
-all
-    : ALL
-    | EVERYTHING
-    | ANYTHING
-    | '*'
-    ;
-
-if
-    : IF
-    | WHEN
-    | WHERE
-    ;
-
-string
-    : STRING
-    | STRING_LITERAL
-    ;
-
-rule
-    : list effect list list conditions EOF
+Rule
+    : List Effect List List Conditions EOF
         {
             return {
                 principals: $1,
@@ -84,7 +98,7 @@ rule
                 conditions: $5
             };
         }
-    | list effect list conditions EOF // implied resources
+    | List Effect List Conditions EOF // implied resources
         {
             return {
                 principals: $1,
@@ -94,7 +108,7 @@ rule
                 conditions: $4
             };
         }
-    | effect list list conditions EOF // implied principals
+    | Effect List List Conditions EOF // implied principals
         {
             return {
                 principals: undefined,
@@ -104,7 +118,7 @@ rule
                 conditions: $4
             };
         }
-    | effect list conditions EOF // implied principals and resources
+    | Effect List Conditions EOF // implied principals and resources
         {
             return {
                 principals: undefined,
@@ -117,40 +131,111 @@ rule
     ;
 
 
+// English lists:
+// foo
+// foo and bar
+// foo, bar, and baz <-- serial or "Oxford" comma
+// foo, bar and baz <-- no serial comma
+List
+    : Identifier
+        {
+            $$ = {
+                exact: {},
+                regex: []
+            };
 
-list
-    : string
-        {
-            $$ = {};
-            $$[$1] = true;
+            if ($1 instanceof RegExp) {
+                $$.regex.push($1.toString());
+            } else {
+                $$.exact[$1] = true;
+            }
         }
-    | string AND string
+    | Identifier AND Identifier
         {
-            $$ = {};
-            $$[$1] = true;
-            $$[$3] = true;
+            $$ = {
+                exact: {},
+                regex: []
+            };
+
+            if ($1 instanceof RegExp) {
+                $$.regex.push($1.toString());
+            } else {
+                $$.exact[$1] = true;
+            }
+
+            if ($3 instanceof RegExp) {
+                $$.regex.push($3.toString());
+            } else {
+                $$.exact[$3] = true;
+            }
         }
-    | long_list
+    | LongList
     ;
 
-long_list
-    : string ',' string ',' AND string
+LongList
+    : Identifier ',' Identifier ',' AND Identifier // serial comma
         {
-            $$ = {};
-            $$[$1] = true;
-            $$[$3] = true;
-            $$[$6] = true;
+            $$ = {
+                exact: {},
+                regex: []
+            };
+
+            if ($1 instanceof RegExp) {
+                $$.regex.push($1.toString());
+            } else {
+                $$.exact[$1] = true;
+            }
+
+            if ($3 instanceof RegExp) {
+                $$.regex.push($3.toString());
+            } else {
+                $$.exact[$3] = true;
+            }
+
+            if ($6 instanceof RegExp) {
+                $$.regex.push($6.toString());
+            } else {
+                $$.exact[$6] = true;
+            }
         }
-    | string ',' long_list
+    | Identifier ',' Identifier AND Identifier // no serial comma
         {
-            $3[$1] = true;
+            $$ = {
+                exact: {},
+                regex: []
+            };
+
+            if ($1 instanceof RegExp) {
+                $$.regex.push($1.toString());
+            } else {
+                $$.exact[$1] = true;
+            }
+
+            if ($3 instanceof RegExp) {
+                $$.regex.push($3.toString());
+            } else {
+                $$.exact[$3] = true;
+            }
+
+            if ($5 instanceof RegExp) {
+                $$.regex.push($5.toString());
+            } else {
+                $$.exact[$5] = true;
+            }
+        }
+    | Identifier ',' LongList
+        {
+            if ($1 instanceof RegExp) {
+                $3.regex.push($1.toString());
+            } else {
+                $3.exact[$1] = true;
+            }
             $$ = $3;
         }
     ;
 
 
-
-effect
+Effect
     : CAN
         {
             $$ = true;
@@ -162,42 +247,46 @@ effect
     ;
 
 
-
-conditions
-    : if or_con
+Conditions
+    : If OrCondition
         {
             $$ = $2;
         }
     | // conditions can be empty
     ;
 
-or_con
-    : or_con OR and_con
+If
+    : IF
+    | WHEN
+    | WHERE
+    ;
+
+OrCondition
+    : OrCondition OR AndCondition
         {
             $$ = ['or', $1, $3];
         }
-    | and_con
+    | AndCondition
     ;
 
-and_con
-    : and_con AND unary_con
+AndCondition
+    : AndCondition AND NotCondition
         {
             $$ = ['and', $1, $3];
         }
-    | unary_con
+    | NotCondition
     ;
 
-unary_con
-    : NOT unary_con
+NotCondition
+    : NOT NotCondition
         {
             $$ = ['not', $2];
         }
-    | condition
+    | Condition
     ;
 
-
-condition
-    : lhs op rhs
+Condition
+    : Lhs String String
         {
             var lhs = $1;
             var op = $2;
@@ -205,7 +294,7 @@ condition
             yy.validate(op, lhs.name, rhs, lhs.type);
             $$ = [ op, lhs, rhs ];
         }
-    | lhs IN '(' comma_separated_list ')'
+    | Lhs IN '(' CommaSeparatedList ')'
         {
             var lhs = $1;
             var op = $2;
@@ -215,39 +304,70 @@ condition
             });
             $$ = [ op, lhs, rhs ];
         }
-    | '(' or_con ')'
+    | '(' OrCondition ')'
         {
             $$ = $2;
         }
     ;
 
-lhs
-    : string '::' string
+Lhs
+    : String '::' String // with type
         {
             $$ = {name: $1, type: $3};
         }
-    | string
+    | String // no type
         {
             $$ = {name: $1};
         }
     ;
 
-op
-    : string
-    ;
-
-rhs
-    : string
-    ;
-
-comma_separated_list
-    : string
+// Simple list
+// foo
+// foo, bar
+// foo, bar, baz
+CommaSeparatedList
+    : String
         {
             $$ = [ $1 ];
         }
-    | comma_separated_list ',' string
+    | CommaSeparatedList ',' String
         {
             $1.push($3);
             $$ = $1;
         }
+    ;
+
+// Identifiers used for principals, actions, or resources
+Identifier
+    : STRING
+    | STRING_LITERAL
+    | FUZZY_STRING
+        {
+            $$ = new RegExp($1.replace('*', '.*'));
+        }
+    | REGEX_LITERAL
+        {
+            var literal = $1;
+            var last = literal.lastIndexOf("/");
+            var body = literal.substring(1, last);
+            var flags = literal.substring(last + 1);
+            $$ = new RegExp(body, flags);
+        }
+    | All
+        {
+            $$ = 1;
+        }
+    ;
+
+
+All
+    : ALL
+    | EVERYTHING
+    | ANYTHING
+    | '*'
+    ;
+
+String
+    : STRING
+    | STRING_LITERAL
     ;

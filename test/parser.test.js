@@ -20,6 +20,10 @@ var strings = [
         'foo, bar, and baz when sourceip::ip = 0.0.0.0 and ' +
         'requesttime::datetime >= 2013-10-01T13:00:00 and ' +
         'requesttime::datetime < 2013-10-01T14:00:00',
+    'Fred, George and Bob can read, write and modify ' +
+        'foo, bar and baz when sourceip::ip = 0.0.0.0 and ' +
+        'requesttime::datetime >= 2013-10-01T13:00:00 and ' +
+        'requesttime::datetime < 2013-10-01T14:00:00',
     'Fred can read foo when sourceip::ip = "::ffff:ada0:d182"',
     'Fred can read "this resource" when some::string = "foo bar"',
     'Fred and "and" can read foo',
@@ -28,7 +32,13 @@ var strings = [
     'Fred can read foo when sourceip in (0.0.0.0, 1.1.1.1, 2.2.2.2)',
     'Fred can read',
     'Can read foo',
-    'Can read'
+    'Can read',
+    'Fred can read /foo/bar',
+    'Fred can /read/::regexp',
+    'Fred can /read/::regex when sourceip::ip = 0.0.0.0',
+    'Fred can /read/::REGEXP when sourceip::ip = 0.0.0.0',
+    '* can r*e*ad *foo',
+    '* can /.*/::regex *'
 ];
 
 strings.forEach(function (s) {
@@ -36,7 +46,7 @@ strings.forEach(function (s) {
         var p = new Parser();
         t.doesNotThrow(function () {
             p.parse(s);
-        });
+        }, s);
         t.end();
     });
 });
@@ -46,10 +56,25 @@ test('no conditions', function (t) {
     var p = new Parser();
     var actual = p.parse('Fred can read foo');
     var expected = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: undefined
     };
     t.deepEqual(expected, actual);
@@ -66,10 +91,25 @@ test('basic', function (t) {
     ];
 
     var expected = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: [ '=', { name: 'sourceip', type: 'ip'}, '0.0.0.0']
     };
     var actual;
@@ -87,10 +127,28 @@ test('lists, length 2', function (t) {
         'sourceip::ip = 0.0.0.0');
 
     var expected = {
-        principals: {'Fred': true, 'Bob': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true,
+                'Bob': true
+            }
+        },
         effect: true,
-        actions: {'read': true, 'write': true},
-        resources: {'foo': true, 'bar': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true,
+                'write': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true,
+                'bar': true
+            }
+        },
         conditions: [ '=', { name: 'sourceip', type: 'ip'}, '0.0.0.0']
     };
     t.deepEqual(expected, actual);
@@ -100,15 +158,40 @@ test('lists, length 2', function (t) {
 
 test('lists, length 3', function (t) {
     var p = new Parser();
-    var actual = p.parse('Fred, George, and Bob can read, write, and modify ' +
+    var serial = p.parse('Fred, George, and Bob can read, write, and modify ' +
         'foo, bar, and baz when sourceip::ip = 0.0.0.0 and ' +
         'requesttime::datetime >= 2013-10-01T13:00:00 and ' +
         'requesttime::datetime < 2013-10-01T14:00:00');
+    var noserial = p.parse('Fred, George and Bob can read, write and modify ' +
+        'foo, bar and baz when sourceip::ip = 0.0.0.0 and ' +
+        'requesttime::datetime >= 2013-10-01T13:00:00 and ' +
+        'requesttime::datetime < 2013-10-01T14:00:00');
     var expected = {
-        principals: {'Fred': true, 'Bob': true, 'George': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true,
+                'Bob': true,
+                'George': true
+            }
+        },
         effect: true,
-        actions: {'read': true, 'write': true, 'modify': true},
-        resources: {'foo': true, 'bar': true, 'baz': true},
+        actions: {
+            regex: [],
+            exact: {
+                'read': true,
+                'write': true,
+                'modify': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true,
+                'bar': true,
+                'baz': true
+            }
+        },
         conditions: ['and',
             ['and',
                 [ '=',
@@ -123,7 +206,8 @@ test('lists, length 3', function (t) {
                 '2013-10-01T14:00:00']
         ]
     };
-    t.deepEqual(expected, actual);
+    t.deepEqual(expected, serial);
+    t.deepEqual(expected, noserial);
     t.end();
 
 });
@@ -207,10 +291,31 @@ test('parentheses', function (t) {
         '(requesttime::datetime >= 2013-10-01T13:00:00 and ' +
         'requesttime::datetime < 2013-10-01T14:00:00)');
     var expected = {
-        principals: {'Fred': true, 'Bob': true, 'George': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true,
+                'Bob': true,
+                'George': true
+            }
+        },
         effect: true,
-        actions: {'read': true, 'write': true, 'modify': true},
-        resources: {'foo': true, 'bar': true, 'baz': true},
+        actions: {
+            regex: [],
+            exact: {
+                'read': true,
+                'write': true,
+                'modify': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true,
+                'bar': true,
+                'baz': true
+            }
+        },
         conditions: ['and',
             [ '=',
                 { name: 'sourceip', type: 'ip'},
@@ -259,10 +364,25 @@ test('condition lists "in (x, y, z)"', function (t) {
     var actual = p.parse('Fred can read foo when sourceip::ip in ' +
         '(0.0.0.0, 1.1.1.1)');
     var expected = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: [ 'in', { name: 'sourceip', type: 'ip'},
             ['0.0.0.0', '1.1.1.1']]
     };
@@ -303,5 +423,62 @@ test('"IN" can only be used with lists', function (t) {
     t.throws(function () {
         p.parse(text);
     });
+    t.end();
+});
+
+test('regular expressions', function (t) {
+    var p = new Parser();
+    var actual = p.parse('Fred can /read/::regex foo');
+    var expected = {
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
+        effect: true,
+        actions: {
+            regex: [
+                '/read/'
+            ],
+            exact: {}
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
+        conditions: undefined
+    };
+    t.deepEqual(actual, expected);
+
+    actual = p.parse('Fred can read foo, bar*, and /b[a]*z/i::regex');
+    expected = {
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [
+                '/bar.*/',
+                '/b[a]*z/i'
+            ],
+            exact: {
+                'foo': true
+            }
+        },
+        conditions: undefined
+    };
+    t.deepEqual(actual, expected);
     t.end();
 });
