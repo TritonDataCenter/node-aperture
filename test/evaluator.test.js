@@ -18,10 +18,25 @@ test('basic allow', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true }
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
     };
     var context = {
         principal: 'Fred',
@@ -42,10 +57,25 @@ test('principal mismatch', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true }
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
     };
     var context = {
         principal: 'Bob',
@@ -66,10 +96,25 @@ test('action mismatch', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true }
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
     };
     var context = {
         principal: 'Fred',
@@ -90,10 +135,25 @@ test('resource mismatch', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true }
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
     };
     var context = {
         principal: 'Fred',
@@ -114,10 +174,25 @@ test('conditions met', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
     };
     var context = {
@@ -142,10 +217,25 @@ test('conditions not met', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
     };
     var context = {
@@ -170,10 +260,25 @@ test('list', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: [ '=', {name: 'sourceip', type: 'ip'},
             ['0.0.0.0', '1.1.1.1']]
     };
@@ -199,10 +304,25 @@ test('list pass', function (t) {
         }
     });
     var policy = {
-        principals: {'Fred': true},
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
         effect: true,
-        actions: {'read': true },
-        resources: {'foo': true },
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
         conditions: [ 'in', {name: 'sourceip', type: 'ip'},
             ['0.0.0.0', '1.1.1.1']]
     };
@@ -215,5 +335,149 @@ test('list pass', function (t) {
         }
     };
     t.ok(e.evaluate(policy, context));
+    t.end();
+});
+
+test('regex', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function () {}
+            }
+        }
+    });
+    var policy = {
+        principals: {
+            regex: ['/Fre?d/'],
+            exact: {}
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
+    };
+    var context = {
+        principal: 'Fred',
+        action: 'read',
+        resource: 'foo'
+    };
+    t.ok(e.evaluate(policy, context));
+    t.end();
+});
+
+test('regex fail', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function () {}
+            }
+        }
+    });
+    var policy = {
+        principals: {
+            regex: ['/Fre?d/'],
+            exact: {}
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
+    };
+    var context = {
+        principal: 'Bob',
+        action: 'read',
+        resource: 'foo'
+    };
+    t.notOk(e.evaluate(policy, context));
+    t.end();
+});
+
+test('many regexes', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function () {}
+            }
+        }
+    });
+    var policy = {
+        principals: {
+            regex: ['/Fre?d/', '/asdf.*/', '/Bob/i'],
+            exact: {}
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
+    };
+    var context = {
+        principal: 'bob',
+        action: 'read',
+        resource: 'foo'
+    };
+    t.ok(e.evaluate(policy, context));
+    t.end();
+});
+
+test('many regexes fail', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function () {}
+            }
+        }
+    });
+    var policy = {
+        principals: {
+            regex: ['/Fre?d/', '/asdf.*/', '/Bill/i'],
+            exact: {}
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
+    };
+    var context = {
+        principal: 'Bob',
+        action: 'read',
+        resource: 'foo'
+    };
+    t.notOk(e.evaluate(policy, context));
     t.end();
 });
