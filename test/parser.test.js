@@ -5,6 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 var Parser = require('../lib/parser.js').Parser;
+var errors = require('../lib/errors.js');
 var test = require('tap').test;
 
 
@@ -222,12 +223,12 @@ test('validation', function (t) {
 
     t.throws(function () {
         parser.parse(text);
-    });
+    }, new errors.MissingTypeError('no type for "sourceip"'));
 
     text = 'Fred can read foo when sourceip::ip = 0.0.0.0';
     t.throws(function () {
         parser.parse(text);
-    });
+    }, new errors.UnknownTypeError('unknown type "ip"'));
 
 
     parser = new Parser({
@@ -240,7 +241,8 @@ test('validation', function (t) {
 
     t.throws(function () {
         parser.parse(text);
-    });
+    }, new errors.UnsupportedOperationError(
+        'unsupported operation "=" on type "ip"'));
 
 
     parser = new Parser({
@@ -254,7 +256,8 @@ test('validation', function (t) {
 
     t.throws(function () {
         parser.parse(text);
-    });
+    }, new errors.ValidationError(
+        'unable to validate value "0.0.0.0" as type "ip"'));
 
     parser = new Parser({
         types: {
@@ -265,7 +268,8 @@ test('validation', function (t) {
     });
     t.throws(function () {
         parser.parse(text);
-    });
+    }, new errors.ValidationError(
+        'unable to validate value "0.0.0.0" as type "ip"'));
 
     parser = new Parser({
         types: {

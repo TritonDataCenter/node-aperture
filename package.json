@@ -18,7 +18,7 @@
     },
     "scripts": {
         "prepublish": "jison lib/language.jison -o gen/language.js",
-        "test": "tap ./test"
+        "test": "jison lib/language.jison -o gen/language.js && tap ./test"
     },
     "engines": {
         "node": ">=0.10"

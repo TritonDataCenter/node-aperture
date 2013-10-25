@@ -5,6 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 var Evaluator = require('../lib/evaluator.js').Evaluator;
+var errors = require('../lib/errors.js');
 var test = require('tap').test;
 
 
@@ -165,6 +166,45 @@ test('resource mismatch', function (t) {
 });
 
 
+test('missing action', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function () {}
+            }
+        }
+    });
+    var policy = {
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        }
+    };
+    var context = {
+        principal: 'Fred',
+        resource: 'bar'
+    };
+    t.notOk(e.evaluate(policy, context));
+    t.end();
+
+});
+
+
 test('conditions met', function (t) {
     var e = new Evaluator({
         types: {
@@ -250,6 +290,49 @@ test('conditions not met', function (t) {
     t.end();
 });
 
+test('missing condition', function (t) {
+    var e = new Evaluator({
+        types: {
+            ip: {
+                '=': function (l, r) {return (l === r); }
+            }
+        }
+    });
+    var policy = {
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
+        conditions: [ '=', {name: 'sourceip', type: 'ip'}, '0.0.0.0' ]
+    };
+    var context = {
+        principal: 'Fred',
+        action: 'read',
+        resource: 'foo',
+        conditions: {}
+    };
+    t.throws(function () {
+        e.evaluate(policy, context)
+    }, new errors.MissingConditionError(
+        'missing condition in context: "sourceip"'));
+
+    t.end();
+});
 
 test('list', function (t) {
     var e = new Evaluator({
