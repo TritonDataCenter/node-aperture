@@ -327,7 +327,7 @@ test('missing condition', function (t) {
         conditions: {}
     };
     t.throws(function () {
-        e.evaluate(policy, context)
+        e.evaluate(policy, context);
     }, new errors.MissingConditionError(
         'missing condition in context: "sourceip"'));
 
