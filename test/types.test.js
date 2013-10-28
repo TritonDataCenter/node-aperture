@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+var assert = require('assert-plus');
 var types = require('../types');
 var test = require('tap').test;
 
@@ -74,7 +75,6 @@ test('ip: eq', function (t) {
     t.end();
 });
 
-
 test('string: ops', function (t) {
     t.ok(types.string['=']('a', 'a'));
     t.ok(types.string['<']('a', 'b'));
@@ -83,12 +83,16 @@ test('string: ops', function (t) {
     t.ok(types.string['<=']('a', 'a'));
     t.ok(types.string['>=']('b', 'a'));
     t.ok(types.string['>=']('a', 'a'));
+    t.ok(types.string['like']('a', '/a/'));
+    t.ok(types.string['like']('A', '/a/i'));
 
     t.notOk(types.string['=']('a', 'b'));
     t.notOk(types.string['<']('b', 'a'));
     t.notOk(types.string['>']('a', 'b'));
     t.notOk(types.string['<=']('b', 'a'));
     t.notOk(types.string['>=']('a', 'b'));
+    t.notOk(types.string['like']('b', '/a/'));
+    t.notOk(types.string['like']('B', '/a/i'));
     t.end();
 });
 
@@ -121,11 +125,32 @@ test('date: validate', function (t) {
     t.end();
 });
 
+test('date: ops', function (t) {
+    var date = new Date('2013-10-24');
+    t.throws(function () {
+        types.date['=']('2013-10-24', '2013-10-24');
+    }, 'AssertionError');
+    t.ok(types.date['='](date, '2013-10-24'));
+    t.ok(types.date['<'](date, '2013-10-25'));
+    t.ok(types.date['>'](date, '2013-10-23'));
+    t.ok(types.date['<='](date, '2013-10-24'));
+    t.ok(types.date['<='](date, '2013-10-25'));
+    t.ok(types.date['>='](date, '2013-10-24'));
+    t.ok(types.date['>='](date, '2013-10-23'));
+
+    t.notOk(types.date['='](date, '1000-10-10'));
+    t.notOk(types.date['<'](date, '2013-10-23'));
+    t.notOk(types.date['>'](date, '2013-10-25'));
+    t.notOk(types.date['<='](date, '2013-10-23'));
+    t.notOk(types.date['>='](date, '2013-10-25'));
+    t.end();
+});
+
 
 test('day: validate', function (t) {
     var days = [
         '1', '2', '3', '4', '5', '6', '7',
-        '2013-06-04', 'Aug 9, 1995'
+        '2013-06-04', 'Aug 9, 1995', 'Monday', 'SU', 'thu'
     ];
 
     days.forEach(function (day) {
@@ -135,9 +160,7 @@ test('day: validate', function (t) {
     });
 
     days = [
-        '0', '8',
-        'Monday',
-        'asdf'
+        '0', '8', 'asdf'
     ];
 
     days.forEach(function (day) {
@@ -149,14 +172,34 @@ test('day: validate', function (t) {
     t.end();
 });
 
+test('day: ops', function (t) {
+    var day = new Date('2013-10-24'); // Thursday
+    t.throws(function () {
+        types.day['=']('2013-10-24', '2013-10-24');
+    }, 'AssertionError');
+    t.ok(types.day['='](day, 'Thursday'));
+    t.ok(types.day['<'](day, 'Friday'));
+    t.ok(types.day['>'](day, 'Wednesday'));
+    t.ok(types.day['<='](day, 'Thursday'));
+    t.ok(types.day['<='](day, 'Friday'));
+    t.ok(types.day['>='](day, 'Thursday'));
+    t.ok(types.day['>='](day, 'Wednesday'));
+    t.ok(types.day['>'](new Date('2013-10-27'), 'Monday'));
+
+    t.notOk(types.day['='](day, 'Friday'));
+    t.notOk(types.day['<'](day, 'Wednesday'));
+    t.notOk(types.day['>'](day, 'Thursday'));
+    t.notOk(types.day['<='](day, 'Wednesday'));
+    t.notOk(types.day['>='](day, 'Friday'));
+    t.end();
+});
+
 
 test('time: validate', function (t) {
     var times = [
         '2013-06-01T13:00:00',
         '00:00:00',
-        '23:59:59',
-        '00:00',
-        '23:59'
+        '23:59:59'
     ];
 
     times.forEach(function (time) {
@@ -166,7 +209,10 @@ test('time: validate', function (t) {
     });
 
     times = [
-        'asdf'
+        '2013-06-01T24:00:00',
+        'asdf',
+        '20',
+        '20:00'
     ];
 
     times.forEach(function (time) {
@@ -175,5 +221,28 @@ test('time: validate', function (t) {
         }, time);
     });
 
+    t.end();
+});
+
+
+test('time: ops', function (t) {
+    var time = new Date('2013-10-24T12:00:00'); // noon
+    t.throws(function () {
+        types.time['=']('2013-10-24T12:00:00', '2013-10-24T:00:00');
+    }, 'AssertionError');
+
+    t.ok(types.time['='](time, '12:00:00'));
+    t.ok(types.time['<'](time, '12:00:01'));
+    t.ok(types.time['>'](time, '11:59:59'));
+    t.ok(types.time['<='](time, '14:00:00'));
+    t.ok(types.time['<='](time, '12:00:00'));
+    t.ok(types.time['>='](time, '10:00:00'));
+    t.ok(types.time['>='](time, '12:00:00'));
+
+    t.notOk(types.time['='](time, '12:00:01'));
+    t.notOk(types.time['<'](time, '11:59:59'));
+    t.notOk(types.time['>'](time, '12:00:01'));
+    t.notOk(types.time['<='](time, '11:59:59'));
+    t.notOk(types.time['>='](time, '12:00:01'));
     t.end();
 });

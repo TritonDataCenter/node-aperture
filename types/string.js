@@ -1,4 +1,17 @@
 // Copyright (c) 2013, Joyent, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+/*
+ * date type
+ * - context: a Date object
+ * - policy: any string parsable by Date.parse
+ *
+ * Compares epoch time in ms
+ */
+
 module.exports = {
     '=': eq,
     '<': lt,
@@ -30,7 +43,14 @@ function ge(context, policy) {
 }
 
 function like(context, policy) {
-    return (context.search(new RegExp(policy)));
+    return (toRegExp(policy).test(context));
+}
+
+function toRegExp(string) {
+    var last = string.lastIndexOf('/');
+    var body = string.substring(1, last);
+    var flags = string.substring(last + 1);
+    return (new RegExp(body, flags));
 }
 
 function validate() {

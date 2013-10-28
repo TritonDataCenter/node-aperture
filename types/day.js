@@ -1,32 +1,100 @@
 // Copyright (c) 2013, Joyent, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 /*
- * Extremely basic day type.
- * Pass in a number between 1 (Monday) and 7 (Sunday) or a date that is on the
- * same weekday as the one desired. Always assumes UTC.
+ * day type
+ * - context: a Date object
+ * - policy: a number between 1 (Monday) and 7 (Sunday) or a date that is on the
+ *   same weekday as the one desired, or Monday/Mon/M (TH for Thursday, SU for
+ *   Sunday)
  */
+
+var assert = require('assert-plus');
+
 module.exports = {
     '=': eq,
+    '<': lt,
+    '>': gt,
+    '<=': le,
+    '>=': ge,
     'validate': validate
 };
 
+var dayNames = {
+    'monday': 1,
+    'mon': 1,
+    'm': 1,
+    'tuesday': 2,
+    'tue': 2,
+    't': 2,
+    'wednesday': 3,
+    'wed': 3,
+    'w': 3,
+    'thursday': 4,
+    'thu': 4,
+    'th': 4,
+    'friday': 5,
+    'fri': 5,
+    'f': 5,
+    'saturday': 6,
+    'sat': 6,
+    's': 6,
+    'sunday': 7,
+    'sun': 7,
+    'su': 7
+}
+
+
 function eq(context, policy) {
-    var parsed = parseInt(context, 10);
-    if (!isNaN(parsed)) {
-        return (parsed === policy);
+    assert.date(context, 'context');
+    return (isoDay(context) === stringToDay(policy));
+}
+
+function lt(context, policy) {
+    assert.date(context, 'context');
+    return (isoDay(context) < stringToDay(policy));
+}
+
+function gt(context, policy) {
+    assert.date(context, 'context');
+    return (isoDay(context) > stringToDay(policy));
+}
+
+function le(context, policy) {
+    assert.date(context, 'context');
+    return (isoDay(context) <= stringToDay(policy));
+}
+
+function ge(context, policy) {
+    assert.date(context, 'context');
+    return (isoDay(context) >= stringToDay(policy));
+}
+
+function isoDay(date) {
+    // ISO-8601 specifies Sunday as 7. getUTCDay returns 0 for Sunday.
+    return (date.getUTCDay() || 7);
+}
+
+function stringToDay(str) {
+    if (dayNames[str.toLowerCase()]) {
+        return (dayNames[str.toLowerCase()]);
     }
 
-    // If context can't be parsed as a Date, getUTCDay will return NaN.
-    // Javascript uses 0-6, ISO-8601 uses 1-7.
-    return (new Date(context).getUTCDay() + 1 === policy);
+    // use Number.valueOf instead of parseInt because parseInt stops at first
+    // non-number character and will parse '2013-01-01' as 2013
+    var cast = Number(str).valueOf();
+    return (isNaN(cast) ? new Date(str).getUTCDay() + 1 : cast);
 }
 
 function validate(input) {
-    var parsed = parseInt(input, 10);
-    var day = isNaN(parsed) ? new Date(input).getUTCDay() + 1 : parsed;
+    var day = stringToDay(input);
     if (isNaN(day)) {
         throw new Error('day: unable to parse day');
     }
-    if (input < 1 || input > 7) {
+    if (day < 1 || day > 7) {
         throw new Error('day: day must be between 1 (Monday) and 7 (Sunday)');
     }
 }
