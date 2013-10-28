@@ -277,7 +277,12 @@ case 30:
         
 break;
 case 33:
-            this.$ = new RegExp($$[$0].replace('*', '.*'));
+            // We want to create a RegExp out of a string but we only want to
+            // treat the asterisk '*' special, so escape any other special
+            // characters, then replace any * with .*
+
+            var escaped = $$[$0].replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+            this.$ = new RegExp(escaped.replace('*', '.*'));
         
 break;
 case 34:
