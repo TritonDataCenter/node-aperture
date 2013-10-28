@@ -75,6 +75,17 @@ test('ip: eq', function (t) {
     t.end();
 });
 
+
+test('string: validate', function (t) {
+    t.doesNotThrow(function () {
+        types.string.validate('/asdf/i', 'like');
+    }, 'like');
+    t.throws(function () {
+        types.string.validate('/*asdf/i', 'like');
+    }, 'like throws');
+    t.end();
+});
+
 test('string: ops', function (t) {
     t.ok(types.string['=']('a', 'a'));
     t.ok(types.string['<']('a', 'b'));

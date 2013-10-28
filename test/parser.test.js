@@ -219,7 +219,7 @@ test('validation', function (t) {
     var parser = new Parser({
         types: {}
     });
-    var text = 'Fred can read foo when sourceip = 0.0.0.0';
+    var text = 'Fred can read foo when sourceip like 0.0.0.0';
 
     t.throws(function () {
         parser.parse(text);

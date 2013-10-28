@@ -53,6 +53,10 @@ function toRegExp(string) {
     return (new RegExp(body, flags));
 }
 
-function validate() {
-    // input is always a string, so validation always passes
+function validate(value, op) {
+    // validate as regex literal if op is `like`
+    // otherwise value is always a string
+    if (op === 'like') {
+        toRegExp(value);
+    }
 }
