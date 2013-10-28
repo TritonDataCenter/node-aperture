@@ -401,7 +401,7 @@ test('condition list validation', function (t) {
     var parser = new Parser({
         types: {
             'ip': {
-                'in': function () {},
+                '=': function () {},
                 'validate': function (value) {
                     if (!this.ran) {
                         t.equal(value, '0.0.0.0');

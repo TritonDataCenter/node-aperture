@@ -289,7 +289,7 @@ Condition
     : Lhs String String
         {
             var lhs = $1;
-            var op = $2;
+            var op = $2.toLowerCase();
             var rhs = $3;
             yy.validate(op, lhs.name, rhs, lhs.type);
             $$ = [ op, lhs, rhs ];
@@ -297,10 +297,10 @@ Condition
     | Lhs IN '(' CommaSeparatedList ')'
         {
             var lhs = $1;
-            var op = $2;
+            var op = $2.toLowerCase();
             var rhs = $4;
             rhs.forEach(function (i) {
-                yy.validate(op, lhs.name, i, lhs.type);
+                yy.validate('=', lhs.name, i, lhs.type);
             });
             $$ = [ op, lhs, rhs ];
         }

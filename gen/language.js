@@ -239,7 +239,7 @@ case 22:
 break;
 case 24:
             var lhs = $$[$0-2];
-            var op = $$[$0-1];
+            var op = $$[$0-1].toLowerCase();
             var rhs = $$[$0];
             yy.validate(op, lhs.name, rhs, lhs.type);
             this.$ = [ op, lhs, rhs ];
@@ -247,10 +247,10 @@ case 24:
 break;
 case 25:
             var lhs = $$[$0-4];
-            var op = $$[$0-3];
+            var op = $$[$0-3].toLowerCase();
             var rhs = $$[$0-1];
             rhs.forEach(function (i) {
-                yy.validate(op, lhs.name, i, lhs.type);
+                yy.validate('=', lhs.name, i, lhs.type);
             });
             this.$ = [ op, lhs, rhs ];
         
