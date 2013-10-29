@@ -544,3 +544,22 @@ test('fuzzy match with escaped asterisk', function (t) {
     t.deepEqual(actual, expected);
     t.end();
 });
+
+test('All/*/Eveyrhing', function (t) {
+    var p = new Parser();
+    var actual = p.parse('* can read');
+    var expected = {
+        principals: 1,
+        effect: true,
+        actions: {
+            regex: [],
+            exact: {
+                'read': true
+            }
+        },
+        resources: undefined,
+        conditions: undefined
+    };
+    t.deepEqual(actual, expected);
+    t.end();
+});

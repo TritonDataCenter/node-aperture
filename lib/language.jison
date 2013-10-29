@@ -170,6 +170,10 @@ List
             }
         }
     | LongList
+    | All
+        {
+            $$ = 1;
+        }
     ;
 
 LongList
@@ -352,10 +356,6 @@ Identifier
             var body = literal.substring(1, last);
             var flags = literal.substring(last + 1);
             $$ = new RegExp(body, flags);
-        }
-    | All
-        {
-            $$ = 1;
         }
     ;
 
