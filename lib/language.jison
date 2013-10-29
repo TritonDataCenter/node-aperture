@@ -343,12 +343,7 @@ Identifier
     | STRING_LITERAL
     | FUZZY_STRING
         {
-            // We want to create a RegExp out of a string but we only want to
-            // treat the asterisk '*' special, so escape any other special
-            // characters, then replace any * with .*
-
-            var escaped = $1.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
-            $$ = new RegExp(escaped.replace('*', '.*'));
+            $$ = new RegExp(fuzzyToRegex($1));
         }
     | REGEX_LITERAL
         {
@@ -376,3 +371,26 @@ String
     : STRING
     | STRING_LITERAL
     ;
+
+%%
+
+/**
+ * Extremely roundabout way of processing escaped asterisks in a fuzzy string,
+ * since Javascript doesn't support negative lookbehinds.
+ *
+ * First, escape all RegExp special characters. Unescaped * will now be '\*' and
+ * escaped * will now be '\\\*'.
+ * Replace '\\\*' with '*'. All literal * will have no backslashes before them.
+ * Replace '\*' with '.*'. All fuzzy * will now be '.*'
+ * Finally, replace all * with no . before them into '\*' using negative
+ * lookahead.
+ *
+ * as\*d*f -> as\\\*d\*f -> as*d\*f -> as*d.*f -> as\*d.*f
+ */
+function fuzzyToRegex(str) {
+    str = str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    str = str.replace('\\\\\\*', '*');
+    str = str.replace('\\*', '.*');
+    str = str.replace(/(?:([^\.]))\*/,'$1\\*');
+    return (str);
+}

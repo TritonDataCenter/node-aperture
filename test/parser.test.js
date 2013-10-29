@@ -515,3 +515,32 @@ test('fuzzy match with regexp special characters', function (t) {
     t.deepEqual(actual, expected);
     t.end();
 });
+
+test('fuzzy match with escaped asterisk', function (t) {
+    var p = new Parser();
+    var actual = p.parse('Fred can re\\*a*d foo');
+    var expected = {
+        principals: {
+            regex: [],
+            exact: {
+                'Fred': true
+            }
+        },
+        effect: true,
+        actions: {
+            regex: [
+                '/re\\*a.*d/'
+            ],
+            exact: {}
+        },
+        resources: {
+            regex: [],
+            exact: {
+                'foo': true
+            }
+        },
+        conditions: undefined
+    };
+    t.deepEqual(actual, expected);
+    t.end();
+});
