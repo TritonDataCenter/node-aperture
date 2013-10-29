@@ -1,5 +1,7 @@
 module.exports = {
-    Parser = require('./lib/parser.js'),
-    Evaluator = require('./lib/evaluator.js'),
-    types = require('./types')
+    Parser: require('./lib/parser.js').Parser,
+    createParser: require('./lib/parser.js').createParser,
+    Evaluator: require('./lib/evaluator.js').Evaluator,
+    createEvaluator: require('./lib/evaluator.js').createEvaluator,
+    types: require('./types')
 };
