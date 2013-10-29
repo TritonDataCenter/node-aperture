@@ -75,7 +75,7 @@ function ge(context, policy) {
 
 function isoDay(date) {
     // ISO-8601 specifies Sunday as 7. getUTCDay returns 0 for Sunday.
-    return (date.getUTCDay() || 7);
+    return (date.getUTCDay() === 0 ? 7 : date.getUTCDay());
 }
 
 function stringToDay(str) {
@@ -83,10 +83,10 @@ function stringToDay(str) {
         return (dayNames[str.toLowerCase()]);
     }
 
-    // use Number.valueOf instead of parseInt because parseInt stops at first
+    // use unary + instead of parseInt because parseInt stops at first
     // non-number character and will parse '2013-01-01' as 2013
-    var cast = Number(str).valueOf();
-    return (isNaN(cast) ? new Date(str).getUTCDay() + 1 : cast);
+    var cast = +str;
+    return (isNaN(cast) ? isoDay(new Date(str)) : cast);
 }
 
 function validate(input) {

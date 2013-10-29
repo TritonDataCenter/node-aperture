@@ -257,3 +257,47 @@ test('time: ops', function (t) {
     t.notOk(types.time['>='](time, '12:00:01'));
     t.end();
 });
+
+test('number: validate', function (t) {
+    var valid = [
+        '3', '123', '010', '0x1F', '9.9'
+    ];
+
+    valid.forEach(function (n) {
+        t.doesNotThrow(function () {
+            types.number.validate(n);
+        }, n);
+    });
+
+    var invalid = [
+        'asdf', '3*3', '9,9'
+    ];
+    invalid.forEach(function (n) {
+        t.throws(function () {
+            types.number.validate(n);
+        }, n);
+    });
+    t.end();
+});
+
+test('number: ops', function (t) {
+    t.throws(function () {
+        types.number['=']('5', '5');
+    }, 'AssertionError');
+
+    t.ok(types.number['='](5, '5'));
+    t.ok(types.number['<'](5, '6'));
+    t.ok(types.number['>'](5, '4'));
+    t.ok(types.number['<='](5, '5'));
+    t.ok(types.number['<='](5, '6'));
+    t.ok(types.number['>='](5, '5'));
+    t.ok(types.number['>='](5, '4'));
+    t.ok(types.number['='](31, '0x1F'));
+
+    t.notOk(types.number['='](5, '6'));
+    t.notOk(types.number['<'](5, '4'));
+    t.notOk(types.number['>'](5, '6'));
+    t.notOk(types.number['<='](5, '4'));
+    t.notOk(types.number['>='](5, '6'));
+    t.end();
+});

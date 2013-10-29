@@ -8,6 +8,7 @@ module.exports = {
     date: require('./date.js'),
     day: require('./day.js'),
     ip: require('./ip.js'),
+    number: require('./number.js'),
     string: require('./string.js'),
     time: require('./time.js')
 };
