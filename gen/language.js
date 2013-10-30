@@ -795,45 +795,41 @@ case 4:return 14;
 break;
 case 5:return 13;
 break;
-case 6:return 'ON';
+case 6:return 'TO';
 break;
-case 7:return 'TO';
+case 7:return 17;
 break;
-case 8:return 17;
+case 8:return 18;
 break;
-case 9:return 18;
+case 9:return 19;
 break;
-case 10:return 19;
+case 10:return 35;
 break;
-case 11:return 'DO';
+case 11:return 36;
 break;
-case 12:return 35;
+case 12:return 37;
 break;
-case 13:return 36;
+case 13:return 26;
 break;
-case 14:return 37;
+case 14:return 30;
 break;
-case 15:return 26;
+case 15:return 12;
 break;
-case 16:return 30;
+case 16:return 27;
 break;
-case 17:return 12;
+case 17:return 29;
 break;
-case 18:return 27;
-break;
-case 19:return 29;
-break;
-case 20:
+case 18:
         yy_.yytext = yy_.yytext.substr(0, yy_.yytext.lastIndexOf('::'));
         return "REGEX_LITERAL";
     
 break;
-case 21:
+case 19:
         yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2);
         return 32;
     
 break;
-case 22:
+case 20:
         if (yy_.yytext === '*') {
             return 38;
         } else if (yy_.yytext.match(/[*]/)) {
@@ -845,8 +841,8 @@ case 22:
 break;
 }
 },
-rules: [/^(?:\s+)/i,/^(?:$)/i,/^(?:AND\b)/i,/^(?:OR\b)/i,/^(?:NOT\b)/i,/^(?:CAN\b)/i,/^(?:ON\b)/i,/^(?:TO\b)/i,/^(?:IF\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:DO\b)/i,/^(?:ALL\b)/i,/^(?:EVERYTHING\b)/i,/^(?:ANYTHING\b)/i,/^(?:IN\b)/i,/^(?:::)/i,/^(?:,)/i,/^(?:\()/i,/^(?:\))/i,/^(?:(\/((([^\n\r\*\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))(([^\n\r\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))*)\/([a-z]*))::regexp?)/i,/^(?:"(?:(\\)["bfnrt/(\\)]|(\\)u[a-fA-F0-9]{4}|[^"(\\)])*")/i,/^(?:([^\s,():](:(?!:))?)+)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],"inclusive":true}}
+rules: [/^(?:\s+)/i,/^(?:$)/i,/^(?:AND\b)/i,/^(?:OR\b)/i,/^(?:NOT\b)/i,/^(?:CAN\b)/i,/^(?:TO\b)/i,/^(?:IF\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:ALL\b)/i,/^(?:EVERYTHING\b)/i,/^(?:ANYTHING\b)/i,/^(?:IN\b)/i,/^(?:::)/i,/^(?:,)/i,/^(?:\()/i,/^(?:\))/i,/^(?:(\/((([^\n\r\*\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))(([^\n\r\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))*)\/([a-z]*))::regexp?)/i,/^(?:"(?:(\\)["bfnrt/(\\)]|(\\)u[a-fA-F0-9]{4}|[^"(\\)])*")/i,/^(?:([^\s,():](:(?!:))?)+)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"inclusive":true}}
 };
 return lexer;
 })();

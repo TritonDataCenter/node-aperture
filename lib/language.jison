@@ -32,14 +32,12 @@ RegularExpressionLiteral \/{RegularExpressionBody}\/{RegularExpressionFlags}
 "NOT"           return 'NOT';
 
 "CAN"           return 'CAN';
-"ON"            return 'ON';
 "TO"            return 'TO';
 
 "IF"            return 'IF';
 "WHEN"          return 'WHEN';
 "WHERE"         return 'WHERE';
 
-"DO"            return 'DO';
 "ALL"           return 'ALL';
 "EVERYTHING"    return 'EVERYTHING';
 "ANYTHING"      return 'ANYTHING';
