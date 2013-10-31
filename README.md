@@ -1,9 +1,9 @@
 # Aperture
 
 Aperture is an access control system with a flexible, human-readable policy
-language, a parser that translates the language into serializable JSON format,
-and an evaluator that evaluates policies and a request's context to determine
-whether to allow or deny.
+language, a parser that translates the language into serializable JSON, and an
+evaluator that evaluates policies and a request's context to determine whether
+to allow or deny.
 
     var aperture = require('aperture');
     var parser = aperture.createParser({
@@ -34,12 +34,24 @@ whether to allow or deny.
 
     var result = evaluator.evaluate(policy, context); // true
 
+
 ## Usage
 
-### Parser
+Both the parser and evaluator take the same set of options - a list of types
+and a mapping from condition name to type name, both of which are used when
+parsing or evaluating conditions. The list of types is used to validate
+condition values when parsing and to perform operations when evaluating. The
+type table is used to look up the type of a condition if one is not specified.
 
+The parser can parse policy text and check for syntax errors without any type
+information. If you pass in only `types`, condition values with explicit types
+will be validated, but any condition values that require a type lookup will be
+ignored. To validate both untyped and typed conditions, pass in `types` and
+`typeTable`.
 
-### Evaluator
+The `types` argument is required when creating an evaluator. The `typeTable` is
+optional if every policy evaluated will only contain explicitly typed
+conditions. Otherwise, pass in `typeTable`.
 
 
 ## Policy Language
@@ -76,7 +88,7 @@ Exact strings need to be surrounded by double quotes only if they contain a
 `::`, `(`, `)`, `,`, or whitespace, or match a reserved word (in a
 case-insensitive match).
 
-You can use the `*` operator to create fuzzy matches. This is equivalent to a
+You can use the `*` character to create fuzzy matches. This is equivalent to a
 `.*` in a regular expression. Escape asterisks with `\*`.
 
 * `ops_*`
@@ -90,6 +102,11 @@ regular expression literal.
 * `/2013-0[1-6]-[0-3][0-9].log/::regex`
 * `/fred(dy)?/i::regex`
 * `/Ashl(y|ey|i|ie|ee|iy|eigh)/::regexp`
+
+Use a single `*`, or `all`, `everything`, or `anything` to match any identifier.
+
+* `Fred can read *`
+* `All can read anything`
 
 ### Conditions
 
@@ -113,6 +130,12 @@ However, an explicit type will preempt any type lookups.
 * `sourceip = 10.0.0.1`
 * `statuscode > 200`
 
+You can check for equality (`=` operator) in a list by using the `in` operator
+on a comma separated list enclosed in parentheses.
+
+* `requesttime::day in (Monday, Tuesday, Wednesday, Thursday, Friday)`
+* `sourceip::ip in (192.168.0.0/16, 10.0.0.0/8)`
+
 Join conditions together with `and` or `or`. Negate conditions with `not`.
 Group conditions with parentheses.
 
@@ -135,3 +158,16 @@ match).
 Identifiers with `::regex` never need to be quoted.
 
 * `/double::colons/::regex`
+
+
+## Types
+
+Aperture comes with a handful of types that cover many basic use cases.
+
+* date - full datetime, comparisons are based on UNIX epoch time in ms
+* day - days of the week, starting with 1 for Monday and 7 for Sunday
+* time - date-agnostic time type. comparisons based on ms from midnight
+* ip - ipv4 and ipv6 single addresses and range support
+* number - numbers.
+* string - strings with lexicographical comparison and `like` operator for
+  regex matching

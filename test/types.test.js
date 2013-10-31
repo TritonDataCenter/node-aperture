@@ -5,7 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 var assert = require('assert-plus');
-var types = require('../types');
+var types = require('..').types;
 var test = require('tap').test;
 
 
