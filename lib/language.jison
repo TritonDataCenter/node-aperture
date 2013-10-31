@@ -368,6 +368,8 @@ All
 String
     : STRING
     | STRING_LITERAL
+    | FUZZY_STRING
+    | '*'
     ;
 
 %%
