@@ -58,11 +58,11 @@ conditions. Otherwise, pass in `typeTable`.
 
 Write policies in subject-verb-object sentences, where subjects = principals,
 actions = verbs, object = resources and other conditions follow as a phrase.
-Language keywords (`if`, `CAN`, All``, etc.) and condition operators (`AND`,
+Language keywords (`if`, `CAN`, `All`, etc.) and condition operators (`AND`,
 `=`, `Like`, etc.) are case-insensitive. Identifiers, including condition names,
 type names, principals, actions, and resources are case-sensitive.
 
-The basic format is <principals> CAN <actions> <resources> WHEN <conditions>.
+The basic format is `<principals> CAN <actions> <resources> WHEN <conditions>`.
 Conditions are optional. For policies with implied principals or resources,
 leave off those parts. The word starting the conditions clause can be `when`,
 `if` , or `where`.
