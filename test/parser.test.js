@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Joyent, Inc. All rights reserved.
+// Copyright (c) 2014, Joyent, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,7 +76,7 @@ test('no conditions', function (t) {
                 'foo': true
             }
         },
-        conditions: undefined
+        conditions: []
     };
     t.deepEqual(expected, actual);
     t.end();
@@ -114,7 +114,8 @@ test('basic', function (t) {
         conditions: [ '=', { name: 'sourceip', type: 'ip'}, '0.0.0.0']
     };
     var actual;
-    for (var i = 0; i < texts.length; i++) {
+    var i;
+    for (i = 0; i < texts.length; i++) {
         actual = p.parse(texts[i]);
         t.deepEqual(expected, actual);
     }
@@ -277,6 +278,26 @@ test('validation', function (t) {
                 '=': function () {},
                 'validate': function () {}
             }
+        }
+    });
+    t.doesNotThrow(function () {
+        parser.parse(text);
+    });
+
+    text = 'Fred can read foo when sourceip = 0.0.0.0';
+    t.throws(function () {
+        parser.parse(text);
+    }, new errors.MissingTypeError('no type for "sourceip"'));
+
+    parser = new Parser({
+        types: {
+            'ip': {
+                '=': function () {},
+                'validate': function () {}
+            }
+        },
+        typeTable: {
+            sourceip: 'ip'
         }
     });
     t.doesNotThrow(function () {
@@ -453,7 +474,7 @@ test('regular expressions', function (t) {
                 'foo': true
             }
         },
-        conditions: undefined
+        conditions: []
     };
     t.deepEqual(actual, expected);
 
@@ -481,7 +502,7 @@ test('regular expressions', function (t) {
                 'foo': true
             }
         },
-        conditions: undefined
+        conditions: []
     };
     t.deepEqual(actual, expected);
     t.end();
@@ -510,7 +531,7 @@ test('fuzzy match with regexp special characters', function (t) {
                 'foo': true
             }
         },
-        conditions: undefined
+        conditions: []
     };
     t.deepEqual(actual, expected);
     t.end();
@@ -539,7 +560,7 @@ test('fuzzy match with escaped asterisk', function (t) {
                 'foo': true
             }
         },
-        conditions: undefined
+        conditions: []
     };
     t.deepEqual(actual, expected);
     t.end();
@@ -557,8 +578,7 @@ test('All/*/Eveyrhing', function (t) {
                 'read': true
             }
         },
-        resources: undefined,
-        conditions: undefined
+        conditions: []
     };
     t.deepEqual(actual, expected);
     t.end();

@@ -97,14 +97,12 @@ case 2:
                 principals: $$[$0-4],
                 effect: $$[$0-3],
                 actions: $$[$0-2],
-                resources: undefined,
                 conditions: $$[$0-1]
             };
         
 break;
 case 3:
             return {
-                principals: undefined,
                 effect: $$[$0-4],
                 actions: $$[$0-3],
                 resources: $$[$0-2],
@@ -114,10 +112,8 @@ case 3:
 break;
 case 4:
             return {
-                principals: undefined,
                 effect: $$[$0-3],
                 actions: $$[$0-2],
-                resources: undefined,
                 conditions: $$[$0-1]
             };
         
@@ -227,6 +223,10 @@ case 13:
 break;
 case 14:
             this.$ = $$[$0];
+        
+break;
+case 15:
+            this.$ = [];
         
 break;
 case 19:

@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Joyent, Inc. All rights reserved.
+// Copyright (c) 2014, Joyent, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,7 +37,8 @@ test('basic allow', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Fred',
@@ -76,7 +77,8 @@ test('principal mismatch', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Bob',
@@ -115,7 +117,8 @@ test('action mismatch', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Fred',
@@ -154,7 +157,8 @@ test('resource mismatch', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Fred',
@@ -193,7 +197,8 @@ test('missing action', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Fred',
@@ -446,7 +451,8 @@ test('regex', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Fred',
@@ -482,7 +488,8 @@ test('regex fail', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Bob',
@@ -518,7 +525,8 @@ test('many regexes', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'bob',
@@ -554,7 +562,8 @@ test('many regexes fail', function (t) {
             exact: {
                 'foo': true
             }
-        }
+        },
+        conditions: []
     };
     var context = {
         principal: 'Bob',

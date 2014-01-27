@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Joyent, Inc. All rights reserved.
+// Copyright (c) 2014, Joyent, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -102,14 +102,12 @@ Rule
                 principals: $1,
                 effect: $2,
                 actions: $3,
-                resources: undefined,
                 conditions: $4
             };
         }
     | Effect List List Conditions EOF // implied principals
         {
             return {
-                principals: undefined,
                 effect: $1,
                 actions: $2,
                 resources: $3,
@@ -119,10 +117,8 @@ Rule
     | Effect List Conditions EOF // implied principals and resources
         {
             return {
-                principals: undefined,
                 effect: $1,
                 actions: $2,
-                resources: undefined,
                 conditions: $3
             };
         }
@@ -255,6 +251,9 @@ Conditions
             $$ = $2;
         }
     | // conditions can be empty
+        {
+            $$ = [];
+        }
     ;
 
 If
