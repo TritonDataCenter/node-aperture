@@ -171,3 +171,8 @@ Aperture comes with a handful of types that cover many basic use cases.
 * number - numbers.
 * string - strings with lexicographical comparison and `like` operator for
   regex matching
+
+## Changes
+
+0.0.0 initial release
+0.0.1 add array type with contains
