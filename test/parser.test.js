@@ -39,7 +39,8 @@ var strings = [
     'Fred can /read/::regex when sourceip::ip = 0.0.0.0',
     'Fred can /read/::REGEXP when sourceip::ip = 0.0.0.0',
     '* can r*e*ad *foo',
-    '* can /.*/::regex *'
+    '* can /.*/::regex *',
+    '* can /r*e *ad/::regex foo'
 ];
 
 strings.forEach(function (s) {

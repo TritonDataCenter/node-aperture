@@ -4,7 +4,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-var assert = require('assert-plus');
 var types = require('..').types;
 var test = require('tap').test;
 
@@ -299,5 +298,35 @@ test('number: ops', function (t) {
     t.notOk(types.number['>'](5, '6'));
     t.notOk(types.number['<='](5, '4'));
     t.notOk(types.number['>='](5, '6'));
+    t.end();
+});
+
+test('array: validate', function (t) {
+    var valid = [
+        '[1,2,3]', '[1, 2, 3]'
+    ];
+    valid.forEach(function (n) {
+        t.doesNotThrow(function () {
+            types.array.validate(n);
+        }, n);
+    });
+
+    var invalid = [
+        '1,2,3', '{"key":"value"}'
+    ];
+    invalid.forEach(function (n) {
+        t.throws(function () {
+            types.number.validate(n);
+        }, n);
+    });
+    t.end();
+});
+
+test('array: contains', function (t) {
+    t.throws(function () {
+        types.array.contains('["a", "b", "c"]', 'b');
+    }, 'AssertionError');
+
+    t.ok(types.array.contains(['a', 'b', 'c'], 'b'));
     t.end();
 });

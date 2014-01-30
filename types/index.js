@@ -5,6 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 module.exports = {
+    array: require('./array.js'),
     date: require('./date.js'),
     day: require('./day.js'),
     ip: require('./ip.js'),
