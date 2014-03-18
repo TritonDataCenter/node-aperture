@@ -22,6 +22,6 @@
         "test": "jison lib/language.jison -o gen/language.js && tap ./test"
     },
     "engines": {
-        "node": ">=0.10"
+        "node": ">=0.8.26"
     }
 }
