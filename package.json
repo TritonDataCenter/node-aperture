@@ -4,6 +4,10 @@
     "version": "0.0.2",
     "author": "Fred Kuo",
     "private": true,
+    "repository": {
+        "type" : "git",
+        "url" : "git+ssh://git@github.com:joyent/node-aperture.git"
+    },
     "main": "index.js",
     "dependencies": {
         "assert-plus": "git://github.com/mcavage/node-assert-plus.git#master",
