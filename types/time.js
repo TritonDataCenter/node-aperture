@@ -18,6 +18,7 @@ var assert = require('assert-plus');
 
 module.exports = {
     '=': eq,
+    '!=': neq,
     '<': lt,
     '>': gt,
     '<=': le,
@@ -28,6 +29,10 @@ module.exports = {
 function eq(context, policy) {
     assert.date(context, 'context');
     return (daySeconds(context) === daySeconds(parse(policy)));
+}
+
+function neq(context, policy) {
+    return (!eq(context, policy));
 }
 
 function lt(context, policy) {

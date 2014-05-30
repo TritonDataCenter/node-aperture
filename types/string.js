@@ -14,6 +14,7 @@
 
 module.exports = {
     '=': eq,
+    '!=': neq,
     '<': lt,
     '>': gt,
     '<=': le,
@@ -24,6 +25,10 @@ module.exports = {
 
 function eq(context, policy) {
     return (context === policy);
+}
+
+function neq(context, policy) {
+    return (!eq(context, policy));
 }
 
 function lt(context, policy) {

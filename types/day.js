@@ -16,6 +16,7 @@ var assert = require('assert-plus');
 
 module.exports = {
     '=': eq,
+    '!=': neq,
     '<': lt,
     '>': gt,
     '<=': le,
@@ -45,12 +46,16 @@ var dayNames = {
     'sunday': 7,
     'sun': 7,
     'su': 7
-}
+};
 
 
 function eq(context, policy) {
     assert.date(context, 'context');
     return (isoDay(context) === stringToDay(policy));
+}
+
+function neq(context, policy) {
+    return (!eq(context, policy));
 }
 
 function lt(context, policy) {

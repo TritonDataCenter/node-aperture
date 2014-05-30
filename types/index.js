@@ -6,6 +6,7 @@
 
 module.exports = {
     array: require('./array.js'),
+    boolean: require('./boolean.js'),
     date: require('./date.js'),
     day: require('./day.js'),
     ip: require('./ip.js'),

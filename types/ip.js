@@ -21,6 +21,7 @@ var ipaddr = require('ipaddr.js');
 
 module.exports = {
     '=': eq,
+    '!=': neq,
     'validate': validate
 };
 
@@ -41,6 +42,10 @@ function eq(context, policy) {
     }
 
     return (result);
+}
+
+function neq(context, policy) {
+    return (!eq(context, policy));
 }
 
 function validate(input) {
