@@ -330,3 +330,16 @@ test('array: contains', function (t) {
     t.ok(types.array.contains(['a', 'b', 'c'], 'b'));
     t.end();
 });
+
+test('boolean', function (t) {
+    t.ok(types.boolean['='](true, 'true'));
+    t.ok(types.boolean['='](false, 'false'));
+    t.ok(types.boolean['!='](true, 'false'));
+    t.ok(types.boolean['!='](false, 'true'));
+
+    t.notOk(types.boolean['='](true, 'false'));
+    t.notOk(types.boolean['='](false, 'true'));
+    t.notOk(types.boolean['!='](true, 'true'));
+    t.notOk(types.boolean['!='](false, 'false'));
+    t.end();
+});
