@@ -1,6 +1,14 @@
 # -*- mode: makefile -*-
 #
-# Copyright (c) 2012, Joyent, Inc. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright (c) 2014, Joyent, Inc.
+#
+
 #
 # Makefile.targ: common targets.
 #
@@ -81,6 +89,10 @@
 #
 #	JSSTYLE_FLAGS	Additional flags to pass through to jsstyle
 #
+#	RESTDOWN_EXT	By default '.md' is required for DOC_FILES (see above).
+#			If you want to use, say, '.restdown' instead, then set
+#			'RESTDOWN_EXT=.restdown' in your Makefile.
+#
 
 #
 # Defaults for the various tools we use.
@@ -96,6 +108,7 @@ JSSTYLE		?= jsstyle
 MKDIR		?= mkdir -p
 MV		?= mv
 RESTDOWN_FLAGS	?=
+RESTDOWN_EXT	?= .md
 RMTREE		?= rm -rf
 JSL_FLAGS  	?= --nologo --nosummary
 
@@ -196,7 +209,7 @@ check-jsstyle:  $(JSSTYLE_EXEC)
 	$(JSSTYLE) $(JSSTYLE_FLAGS) $(JSSTYLE_FILES)
 
 .PHONY: check
-check: check-jsl check-json $(JSSTYLE_TARGET) check-bash
+check:: check-jsl check-json $(JSSTYLE_TARGET) check-bash
 	@echo check ok
 
 .PHONY: clean
@@ -251,9 +264,9 @@ DOC_MEDIA_FILES_BUILD := $(DOC_MEDIA_FILES:%=$(DOC_BUILD)/media/%)
 # to get there.
 #
 .PHONY: docs
-docs:							\
-	$(DOC_FILES:%.restdown=$(DOC_BUILD)/%.html)		\
-	$(DOC_FILES:%.restdown=$(DOC_BUILD)/%.json)		\
+docs::							\
+	$(DOC_FILES:%$(RESTDOWN_EXT)=$(DOC_BUILD)/%.html)		\
+	$(DOC_FILES:%$(RESTDOWN_EXT)=$(DOC_BUILD)/%.json)		\
 	$(DOC_MEDIA_FILES_BUILD)
 
 #
@@ -261,16 +274,16 @@ docs:							\
 # files in DOC_BUILD are up to date.
 #
 .PRECIOUS:					\
-	$(DOC_FILES:%.restdown=docs/%.html)		\
-	$(DOC_FILES:%.restdown=docs/%json)
+	$(DOC_FILES:%$(RESTDOWN_EXT)=docs/%.html)		\
+	$(DOC_FILES:%$(RESTDOWN_EXT)=docs/%json)
 
 #
 # We do clean those intermediate files, as well as all of DOC_BUILD.
 #
 CLEAN_FILES +=					\
 	$(DOC_BUILD)				\
-	$(DOC_FILES:%.restdown=docs/%.html)		\
-	$(DOC_FILES:%.restdown=docs/%.json)
+	$(DOC_FILES:%$(RESTDOWN_EXT)=docs/%.html)		\
+	$(DOC_FILES:%$(RESTDOWN_EXT)=docs/%.json)
 
 #
 # Before installing the files, we must make sure the directories exist. The |
@@ -281,9 +294,11 @@ CLEAN_FILES +=					\
 $(DOC_MEDIA_FILES_BUILD): | $(DOC_MEDIA_DIRS_BUILD)
 
 $(DOC_BUILD)/%: docs/% | $(DOC_BUILD)
+	$(MKDIR) $(shell dirname $@)
 	$(CP) $< $@
 
-docs/%.json docs/%.html: docs/%.restdown | $(DOC_BUILD) $(RESTDOWN_EXEC)
+docs/%.json docs/%.html: docs/%$(RESTDOWN_EXT) | $(DOC_BUILD) $(RESTDOWN_EXEC) \
+    $(EXTRA_DOC_DEPS)
 	$(RESTDOWN) $(RESTDOWN_FLAGS) -m $(DOC_BUILD) $<
 
 $(DOC_BUILD):

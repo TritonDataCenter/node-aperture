@@ -1,1 +1,0 @@
-- https://stripe.com/docs/api   drool
