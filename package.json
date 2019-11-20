@@ -12,7 +12,7 @@
     "dependencies": {
         "assert-plus": "1.0.0",
         "ipaddr.js": "0.1.1",
-        "moment": "2.3.1",
+        "moment": "2.24.0",
         "jsprim": "0.5.1",
         "verror": "1.3.6"
     },
