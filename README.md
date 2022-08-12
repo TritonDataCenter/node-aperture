@@ -5,6 +5,7 @@ language, a parser that translates the language into serializable JSON, and an
 evaluator that evaluates policies and a request's context to determine whether
 to allow or deny.
 
+```js
     var aperture = require('aperture');
     var parser = aperture.createParser({
         types: aperture.types,
@@ -33,7 +34,7 @@ to allow or deny.
     };
 
     var result = evaluator.evaluate(policy, context); // true
-
+```
 
 ## Usage
 

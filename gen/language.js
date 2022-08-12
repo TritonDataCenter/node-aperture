@@ -77,7 +77,8 @@ yy: {},
 symbols_: {"error":2,"Rule":3,"List":4,"Effect":5,"Conditions":6,"EOF":7,"Identifier":8,"AND":9,"LongList":10,"All":11,",":12,"CAN":13,"NOT":14,"If":15,"OrCondition":16,"IF":17,"WHEN":18,"WHERE":19,"OR":20,"AndCondition":21,"NotCondition":22,"Condition":23,"Lhs":24,"String":25,"IN":26,"(":27,"CommaSeparatedList":28,")":29,"::":30,"STRING":31,"STRING_LITERAL":32,"FUZZY_STRING":33,"REGEX_LITERAL":34,"ALL":35,"EVERYTHING":36,"ANYTHING":37,"*":38,"$accept":0,"$end":1},
 terminals_: {2:"error",7:"EOF",9:"AND",12:",",13:"CAN",14:"NOT",17:"IF",18:"WHEN",19:"WHERE",20:"OR",26:"IN",27:"(",29:")",30:"::",31:"STRING",32:"STRING_LITERAL",33:"FUZZY_STRING",34:"REGEX_LITERAL",35:"ALL",36:"EVERYTHING",37:"ANYTHING",38:"*"},
 productions_: [0,[3,6],[3,5],[3,5],[3,4],[4,1],[4,3],[4,1],[4,1],[10,6],[10,5],[10,3],[5,1],[5,2],[6,2],[6,0],[15,1],[15,1],[15,1],[16,3],[16,1],[21,3],[21,1],[22,2],[22,1],[23,3],[23,5],[23,3],[24,3],[24,1],[28,1],[28,3],[8,1],[8,1],[8,1],[8,1],[11,1],[11,1],[11,1],[11,1],[25,1],[25,1],[25,1],[25,1]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
+performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
+/**/) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -779,7 +780,8 @@ stateStackSize:function stateStackSize() {
         return this.conditionStack.length;
     },
 options: {"case-insensitive":true},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
+performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
+/**/) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
@@ -841,7 +843,7 @@ case 20:
 break;
 }
 },
-rules: [/^(?:\s+)/i,/^(?:$)/i,/^(?:AND\b)/i,/^(?:OR\b)/i,/^(?:NOT\b)/i,/^(?:CAN\b)/i,/^(?:TO\b)/i,/^(?:IF\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:ALL\b)/i,/^(?:EVERYTHING\b)/i,/^(?:ANYTHING\b)/i,/^(?:IN\b)/i,/^(?:::)/i,/^(?:,)/i,/^(?:\()/i,/^(?:\))/i,/^(?:(\/((([^\n\r\*\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))(([^\n\r\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))*)\/([a-z]*))::regexp?)/i,/^(?:"(?:(\\)["bfnrt/(\\)]|(\\)u[a-fA-F0-9]{4}|[^"(\\)])*")/i,/^(?:([^\s,():](:(?!:))?)+)/i],
+rules: [/^(?:\s+)/i,/^(?:$)/i,/^(?:AND\b)/i,/^(?:OR\b)/i,/^(?:NOT\b)/i,/^(?:CAN\b)/i,/^(?:TO\b)/i,/^(?:IF\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:ALL\b)/i,/^(?:EVERYTHING\b)/i,/^(?:ANYTHING\b)/i,/^(?:IN\b)/i,/^(?:::)/i,/^(?:,)/i,/^(?:\()/i,/^(?:\))/i,/^(?:(\/((([^\n\r\*\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))(([^\n\r\\\/\[])|(\\([^\n\r]))|(\[([^\n\r\]\\]|(\\([^\n\r])))*\]))*)\/([a-z]*))::regexp?)/i,/^(?:"(?:(\\)["bfnrt\/(\\)]|(\\)u[a-fA-F0-9]{4}|[^"(\\)])*")/i,/^(?:([^\s,():](:(?!:))?)+)/i],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"inclusive":true}}
 };
 return lexer;
