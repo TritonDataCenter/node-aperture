@@ -219,7 +219,7 @@ test('time: validate', function (t) {
     });
 
     times = [
-        // A 24th hour is allowed only if minutes, seconds, and milliseconds are 0
+        // A 24th hour is allowed only if minutes, seconds, and ms are 0
         '2013-06-01T24:00:01',
         'asdf',
         '20',
